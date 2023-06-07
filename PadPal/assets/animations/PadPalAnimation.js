@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { Animated, View, StyleSheet } from "react-native";
+import stylesGlobal from "../styles";
 
 export default function PadPalAnimation({ isAnimating, setIsAnimating }) {
   const padXPosition = useRef(new Animated.Value(-150)).current;
@@ -44,8 +45,8 @@ export default function PadPalAnimation({ isAnimating, setIsAnimating }) {
 
   return (
     <View style={styles.tempAnimation}>
-      <Animated.Text style={[styles.title, padStyle]}>Pad</Animated.Text>
-      <Animated.Text style={[styles.title, palStyle]}>Pal</Animated.Text>
+      <Animated.Text style={[stylesGlobal.title, padStyle]}>Pad</Animated.Text>
+      <Animated.Text style={[stylesGlobal.title, palStyle]}>Pal</Animated.Text>
     </View>
   );
 }
@@ -56,12 +57,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-  },
-  title: {
-    fontFamily: "LogoFont",
-    fontSize: 50,
-    fontWeight: "bold",
-    color: "navy",
-    textAlign: "center",
   },
 });

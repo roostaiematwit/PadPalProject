@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, SafeAreaView, Animated } from "react-native";
 import PostCard from "../components/PostCard";
 import PadPalAnimation from "../animations/PadPalAnimation";
-import { useFonts } from "expo-font";
+
+import stylesGlobal from "../styles";
 
 const postData = [
   {
@@ -43,14 +44,6 @@ export default PostsScreen = () => {
     };
   }, [isAnimating]);
 
-  const [fontsLoaded] = useFonts({
-    LogoFont: require("../fonts/Typo_Round_Bold_Demo.otf"),
-  });
-
-  if (!fontsLoaded) {
-    return undefined;
-  }
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <PadPalAnimation
@@ -60,7 +53,7 @@ export default PostsScreen = () => {
 
       {isAnimating ? null : (
         <>
-          <Text style={styles.title}>PadPal</Text>
+          <Text style={stylesGlobal.title}>PadPal</Text>
           <PostCard postData={postData} contentOpacity={contentOpacity} />
         </>
       )}
@@ -73,12 +66,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     paddingTop: 2,
-  },
-  title: {
-    fontFamily: "LogoFont",
-    fontSize: 50,
-    fontWeight: "bold",
-    color: "navy",
-    textAlign: "center",
   },
 });
