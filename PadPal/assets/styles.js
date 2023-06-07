@@ -1,18 +1,18 @@
 import { StyleSheet } from "react-native";
 
 const stylesGlobal = StyleSheet.create({
-  notch: {},
+  notch: { flex: 1, backgroundColor: "grey" },
   screenContainer: {
     flex: 1,
+    backgroundColor: "white",
     marginTop: 35,
     marginBottom: 0,
     borderColor: "blue",
-    borderWidth: 0,
-    backgroundColor: "white",
+    borderWidth: 1,
   },
   innerContainer: {
     borderColor: "red",
-    borderWidth: 0,
+    borderWidth: 1,
     height: "100%",
     backgroundColor: "white",
   },

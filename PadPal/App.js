@@ -1,12 +1,10 @@
 import { useFonts } from "expo-font";
 import React, { useState, useEffect, useRef } from "react";
+import { Animated, View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import Tabs from "./assets/navigation/tabs";
-import { SafeAreaView, Animated, View, Text } from "react-native";
-import PadPalAnimation from "./assets/animations/PadPalAnimation";
 
-import PostsScreen from "./assets/screens/PostsScreen";
-import HomeScreen from "./assets/screens/HomeScreen";
+import Tabs from "./assets/navigation/tabs";
+import PadPalAnimation from "./assets/animations/PadPalAnimation";
 import stylesGlobal from "./assets/styles";
 
 export default function App() {
@@ -19,6 +17,7 @@ export default function App() {
   const [isAnimating, setIsAnimating] = useState(true);
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
+  // Animation to have screen fade in after opening animation
   useEffect(() => {
     return () => {
       console.log("Animation done");
@@ -35,30 +34,26 @@ export default function App() {
   }
 
   return (
-    <View style={stylesGlobal.screenContainer}>
-      <PadPalAnimation
-        isAnimating={isAnimating}
-        setIsAnimating={setIsAnimating}
-      />
+    <View style={stylesGlobal.notch}>
+      <View style={stylesGlobal.screenContainer}>
+        <PadPalAnimation
+          isAnimating={isAnimating}
+          setIsAnimating={setIsAnimating}
+        />
 
-      {isAnimating ? null : (
-        <>
-          <Text style={stylesGlobal.title}>PadPal</Text>
-          <Animated.View style={{ flex: 1, opacity: contentOpacity }}>
-            <NavigationContainer>
-              <Tabs />
-            </NavigationContainer>
-          </Animated.View>
-        </>
-      )}
+        {isAnimating ? null : (
+          <>
+            <Text style={stylesGlobal.title}>PadPal</Text>
+            <Animated.View style={{ flex: 1, opacity: contentOpacity }}>
+              <NavigationContainer>
+                <Tabs />
+              </NavigationContainer>
+            </Animated.View>
+          </>
+        )}
+      </View>
     </View>
   );
 }
 
-const styles = {
-  safeArea: {
-    flex: 1,
-    justifyContent: "space-between",
-    backgroundColor: "white",
-  },
-};
+const styles = {};

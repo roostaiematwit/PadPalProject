@@ -1,7 +1,11 @@
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  createBottomTabNavigator,
+  BottomTabBar,
+} from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
+import { useTheme } from "react-native-paper";
 
 import HomeScreen from "../screens/HomeScreen";
 import PostsScreen from "../screens/PostsScreen";
@@ -12,49 +16,29 @@ import ProfileScreen from "../screens/ProfileScreen";
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
-  const CustomTabBarButton = ({ children, onPress }) => (
-    <TouchableOpacity
-      style={{
-        top: 12,
-        justifyContent: "center",
-        alignItems: "center",
-        ...styles.shadow,
-      }}
-      onPress={onPress}
-    >
-      <View
-        style={{
-          width: 70,
-          height: 70,
-          borderRadius: 35,
-          backgroundColor: "navy",
-        }}
-      >
-        {children}
-      </View>
-    </TouchableOpacity>
-  );
-
+  const theme = useTheme();
   return (
     <Tab.Navigator
       initialRouteName="Home"
       screenOptions={{
-        tabBarActiveTintColor: "navy", // change this color to match your app's theme
+        tabBarActiveTintColor: theme.colors.primary, // change this color to match your app's theme
         tabBarInactiveTintColor: "gray",
-        tabBarIconSize: 10,
         headerShown: false,
         tabBarStyle: {
-          //   backgroundColor: "#fff",
-          //   borderTopWidth: 0,
-          //   elevation: 0,
-          position: "absolute",
-          bottom: 25,
-          left: 20,
-          right: 20,
-          elevation: 0,
           backgroundColor: "#fff",
-          borderRadius: 15,
-          height: 90,
+          borderTopWidth: 0,
+          elevation: 0,
+
+          // position: "absolute",
+          // bottom: 25,
+          // left: 20,
+          // right: 20,
+          // elevation: 0,
+          // backgroundColor: "#fff",
+          // borderRadius: 15,
+          // borderColor: "lightgrey",
+          // borderWidth: 0,
+          // height: 90,
 
           ...styles.shadow,
         },
@@ -102,7 +86,35 @@ const Tabs = () => {
         }}
       />
 
-      <Tab.Screen name="MakePost" component={MakePostScreen} />
+      <Tab.Screen
+        name="MakePost"
+        component={MakePostScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <View
+              style={{
+                width: 65,
+                height: 65,
+                backgroundColor: theme.colors.primary,
+                borderRadius: 65 / 2,
+                justifyContent: "center",
+                alignItems: "center",
+                marginBottom: 15,
+                ...styles.shadow,
+              }}
+            >
+              <Image
+                source={require("../icons/plus.png")}
+                style={{
+                  width: 22,
+                  height: 22,
+                  tintColor: "white",
+                }}
+              ></Image>
+            </View>
+          ),
+        }}
+      />
 
       <Tab.Screen
         name="Posts"
@@ -152,12 +164,22 @@ export default Tabs;
 
 const styles = StyleSheet.create({
   shadow: {
-    shadowColor: "#7F5DF0",
-    shdaowOffset: {
+    shadowColor: "black",
+    shadowOffset: {
       width: 0,
-      height: 10,
+      height: 5,
     },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.15,
+    shadowRadius: 3.5,
+    elevation: 5,
+  },
+  oppsiteShadow: {
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: -5,
+    },
+    shadowOpacity: 0.15,
     shadowRadius: 3.5,
     elevation: 5,
   },
