@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, Text, SafeAreaView, Animated } from "react-native";
+import { StyleSheet, Text, SafeAreaView, Animated, View } from "react-native";
 import PostCard from "../components/PostCard";
 import PadPalAnimation from "../animations/PadPalAnimation";
 
@@ -29,39 +29,21 @@ const postData = [
   },
   // More posts...
 ];
-export default PostsScreen = () => {
-  const [isAnimating, setIsAnimating] = useState(true);
-  const contentOpacity = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    return () => {
-      console.log("ANimation done");
-      Animated.timing(contentOpacity, {
-        toValue: 1,
-        duration: 1000,
-        useNativeDriver: true,
-      }).start();
-    };
-  }, [isAnimating]);
-
+const PostsScreen = () => {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <PadPalAnimation
-        isAnimating={isAnimating}
-        setIsAnimating={setIsAnimating}
-      />
-
-      {isAnimating ? null : (
-        <>
-          <Text style={stylesGlobal.title}>PadPal</Text>
-          <PostCard postData={postData} contentOpacity={contentOpacity} />
-        </>
-      )}
-    </SafeAreaView>
+    <View style={stylesGlobal.innerContainer}>
+      <PostCard postData={postData} contentOpacity={1} />
+    </View>
   );
 };
 
+export default PostsScreen;
+
 const styles = StyleSheet.create({
+  cardsContainer: {
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
     justifyContent: "space-between",

@@ -23,7 +23,7 @@ export default function PadPalAnimation({ isAnimating, setIsAnimating }) {
       }),
     ]).start(() => {
       Animated.timing(yPosition, {
-        toValue: -335,
+        toValue: -355,
         duration: 1000,
         useNativeDriver: true,
       }).start(() => {

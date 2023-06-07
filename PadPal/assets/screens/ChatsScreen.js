@@ -2,15 +2,15 @@ import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import stylesGlobal from "../styles";
 
-const HomeScreen = () => {
+const ChatsScreen = () => {
   return (
     <View style={styles.innerContainer}>
-      <Text style={styles.text}>HomeScreen</Text>
+      <Text style={styles.text}>ChatsScreen</Text>
     </View>
   );
 };
 
-export default HomeScreen;
+export default ChatsScreen;
 
 const styles = StyleSheet.create({
   innerContainer: {

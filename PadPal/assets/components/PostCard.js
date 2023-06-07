@@ -4,7 +4,11 @@ import { Card, Title, Paragraph, Button } from "react-native-paper";
 
 export default function PostCard({ postData, contentOpacity }) {
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      style={styles.scrollView}
+      contentContainerStyle={styles.contentContainer}
+    >
       {postData.map((post) => (
         <Animated.View
           key={post.id}
@@ -29,14 +33,16 @@ export default function PostCard({ postData, contentOpacity }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    overflow: "hidden",
+    backgroundColor: "white",
+  },
+  contentContainer: {
+    paddingBottom: 120,
   },
   card: {
     margin: 10,
+    padding: 5,
   },
   image: {
     width: "100%",
