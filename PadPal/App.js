@@ -1,6 +1,6 @@
 import { useFonts } from "expo-font";
 import React, { useState, useEffect, useRef } from "react";
-import { Animated, View, Text } from "react-native";
+import { Animated, View, Text, StatusBar, Dimensions } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 
 import Tabs from "./assets/navigation/tabs";
@@ -15,6 +15,8 @@ export default function App() {
 
   //Opening Animation
   const [isAnimating, setIsAnimating] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { height } = Dimensions.get("window");
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
   // Animation to have screen fade in after opening animation
@@ -34,23 +36,31 @@ export default function App() {
   }
 
   return (
-    <View style={stylesGlobal.notch}>
-      <View style={stylesGlobal.screenContainer}>
-        <PadPalAnimation
-          isAnimating={isAnimating}
-          setIsAnimating={setIsAnimating}
-        />
+    <View style={{ flex: 1, backgroundColor: isDarkMode ? "#000" : "#fff" }}>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
 
-        {isAnimating ? null : (
-          <>
-            <Text style={stylesGlobal.title}>PadPal</Text>
-            <Animated.View style={{ flex: 1, opacity: contentOpacity }}>
-              <NavigationContainer>
-                <Tabs />
-              </NavigationContainer>
-            </Animated.View>
-          </>
-        )}
+      <View style={stylesGlobal.screenContainer}>
+        <View style={stylesGlobal.padPalContainer}>
+          {isAnimating ? (
+            <PadPalAnimation
+              isAnimating={isAnimating}
+              setIsAnimating={setIsAnimating}
+              ScreenHeight={height}
+            />
+          ) : (
+            <Text style={{ ...stylesGlobal.title, bottom: 0 }}>PadPal</Text>
+          )}
+
+          {!isAnimating && (
+            <>
+              <Animated.View style={{ flex: 1, opacity: contentOpacity }}>
+                <NavigationContainer>
+                  <Tabs />
+                </NavigationContainer>
+              </Animated.View>
+            </>
+          )}
+        </View>
       </View>
     </View>
   );

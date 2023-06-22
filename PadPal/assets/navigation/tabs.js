@@ -7,11 +7,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import { useTheme } from "react-native-paper";
 
-import HomeScreen from "../screens/HomeScreen";
+import HomeScreen from "../screens/SettingsScreen";
 import PostsScreen from "../screens/PostsScreen";
 import MakePostScreen from "../screens/MakePostScreen";
 import ChatsScreen from "../screens/ChatsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -47,7 +48,7 @@ const Tabs = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={PostsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <>
@@ -118,26 +119,6 @@ const Tabs = () => {
 
       <Tab.Screen
         name="Posts"
-        component={PostsScreen}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <>
-              <View
-                style={{
-                  top: 15,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Ionicons name="list" size={size} color={color} />
-                <Text style={{ color: color, fontSize: 12 }}>Posts</Text>
-              </View>
-            </>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -151,6 +132,26 @@ const Tabs = () => {
               >
                 <Ionicons name="person" size={size} color={color} />
                 <Text style={{ color: color, fontSize: 12 }}>Profile</Text>
+              </View>
+            </>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <>
+              <View
+                style={{
+                  top: 15,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Ionicons name="settings" size={size} color={color} />
+                <Text style={{ color: color, fontSize: 12 }}>Settings</Text>
               </View>
             </>
           ),

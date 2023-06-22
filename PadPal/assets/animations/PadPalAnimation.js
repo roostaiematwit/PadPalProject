@@ -4,7 +4,12 @@ import React, { useEffect, useRef } from "react";
 import { Animated, View, StyleSheet } from "react-native";
 import stylesGlobal from "../styles";
 
-export default function PadPalAnimation({ isAnimating, setIsAnimating }) {
+export default function PadPalAnimation({
+  isAnimating,
+  setIsAnimating,
+  ScreenHeight,
+}) {
+  const height = ScreenHeight;
   const padXPosition = useRef(new Animated.Value(-150)).current;
   const palXPosition = useRef(new Animated.Value(150)).current;
   const yPosition = useRef(new Animated.Value(0)).current;
@@ -23,7 +28,7 @@ export default function PadPalAnimation({ isAnimating, setIsAnimating }) {
       }),
     ]).start(() => {
       Animated.timing(yPosition, {
-        toValue: -356.5,
+        toValue: -height / 1.75 + 109.5,
         duration: 1000,
         useNativeDriver: true,
       }).start(() => {
