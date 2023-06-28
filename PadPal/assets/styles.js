@@ -9,7 +9,7 @@ const stylesGlobal = StyleSheet.create({
   },
   innerContainer: {
     borderColor: "blue",
-    borderWidth: 1,
+    borderWidth: showBorder,
     height: "100%",
     backgroundColor: "white",
   },

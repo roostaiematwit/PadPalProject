@@ -8,6 +8,7 @@ import React, {
 import { StyleSheet, Text, SafeAreaView, Animated, View } from "react-native";
 import PostsList from "../components/PostsList";
 import AddPosts from "../components/AddPosts";
+import { auth } from "../../firebase";
 
 import stylesGlobal from "../styles";
 
@@ -49,6 +50,7 @@ export default PostsScreen = () => {
   return (
     <View style={stylesGlobal.innerContainer}>
       {/* <AddPosts onAddPost={handleAddPost} /> */}
+      <Text>{auth.currentUser?.email}</Text>
       <PostsList
         posts={posts}
         onDelete={handleDeletePost}
