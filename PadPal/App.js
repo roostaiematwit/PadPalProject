@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Tabs from "./assets/navigation/tabs";
 import PadPalAnimation from "./assets/animations/PadPalAnimation";
 import stylesGlobal from "./assets/styles";
+import CreateAccount from "./assets/screens/CreateAccount";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,12 +56,17 @@ export default function App() {
         ) : (
           <>
             <Text style={{ ...stylesGlobal.title, bottom: -3 }}>PadPal</Text>
-            <Animated.View style={{ flex: 1, opacity: contentOpacity }}>
+            <Animated.View style={{ flex: 1, opacity: contentOpacity, backgroundColor: "#fff", borderColor: 'blue', borderWidth: 1 }}>
               <NavigationContainer>
                 <Stack.Navigator>
                   <Stack.Screen
                     name="Login"
                     component={LoginScreen}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="CreateAccount"
+                    component={CreateAccount}
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen
@@ -78,4 +84,9 @@ export default function App() {
   );
 }
 
-const styles = {};
+const styles = {
+  container:{
+    borderWidth:1,
+    borderColor: "red", 
+  }
+};

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { KeyboardAvoidingView, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, StyleSheet, View, Alert } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import { auth } from "../../firebase";
 import { useNavigation } from "@react-navigation/native";
 import stylesGlobal from "../styles";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 
-const LoginScreen = () => {
+const CreateAccount = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
   const navigation = useNavigation();
 
@@ -24,13 +27,12 @@ const LoginScreen = () => {
     return unsubscribe;
   }, []);
 
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
+  const handleCreateAccount = () => {
+    createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        console.log("Logged in with: " + user.email);
-        navigation.replace("Tabs");
+        console.log("Registered with: " + user.email);
       })
       .catch((error) => alert(error.message));
   };
@@ -55,18 +57,31 @@ const LoginScreen = () => {
           onChangeText={(text) => setPassword(text)}
           value={password}
         />
-        <Button
-          title="Login"
-          buttonStyle={styles.loginButton}
-          onPress={handleLogin}
+        <Input
+          placeholder="Confirm Password"
+          leftIcon={{ type: "font-awesome", name: "lock" }}
+          secureTextEntry
+          containerStyle={styles.inputContainer}
+          inputStyle={styles.input}
+          onChangeText={(text) => setPasswordConfirm(text)} // Check for same password
+          value={passwordConfirm}
         />
-        <Text style={styles.or}>or</Text>
         <Button
           title="Create Account"
           type="outline"
           buttonStyle={styles.createButton}
           titleStyle={styles.createTitle}
-          onPress={() => navigation.navigate("CreateAccount")}
+          onPress={() => {
+            console.log("Create button pressed");
+            if (password === passwordConfirm) {
+                handleCreateAccount();
+                console.log("Account created");
+            }
+            else {
+                Alert.alert('Error', 'The passwords do not match.', [{ text: 'OK' }]);
+                console.log("Passwords do not match");
+            }
+          }}
         />
       </View>
     </KeyboardAvoidingView>
@@ -84,7 +99,7 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 50,
     textAlign: "center",
-    color: "#444",
+    color: "#fff",
   },
   inputContainer: {
     marginBottom: 30,
@@ -92,27 +107,15 @@ const styles = StyleSheet.create({
   input: {
     paddingLeft: 10,
   },
-  loginButton: {
+  createButton: {
     backgroundColor: "#841584",
     paddingVertical: 15,
     borderRadius: 50,
     marginBottom: 15,
-  },
-  or: {
-    textAlign: "center",
-    marginBottom: 15,
-    color: "#444",
-    fontSize:18,
-  },
-  createButton: {
-    borderColor: "#841584",
-    borderWidth: 2,
-    paddingVertical: 15,
-    borderRadius: 50,
-  },
+  },  
   createTitle: {
-    color: "#841584",
+    color: "#fff",
   },
 });
 
-export default LoginScreen;
+export default CreateAccount;

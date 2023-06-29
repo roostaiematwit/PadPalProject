@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+export const showBorder = 1;
 
 const stylesGlobal = StyleSheet.create({
   screenContainer: {
@@ -31,4 +32,4 @@ const stylesGlobal = StyleSheet.create({
 
 export default stylesGlobal;
 
-export const showBorder = 1;
+
