@@ -56,7 +56,7 @@ export default function App() {
         ) : (
           <>
             <Text style={{ ...stylesGlobal.title, bottom: -3 }}>PadPal</Text>
-            <Animated.View style={{ flex: 1, opacity: contentOpacity, backgroundColor: "#fff", borderColor: 'blue', borderWidth: 1 }}>
+            <Animated.View style={{ flex: 1, opacity: contentOpacity, backgroundColor: "#fff" }}>
               <NavigationContainer>
                 <Stack.Navigator>
                   <Stack.Screen

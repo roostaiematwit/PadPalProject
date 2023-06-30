@@ -27,7 +27,6 @@ const Tabs = () => {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#fff",
-          borderTopWidth: 0,
           elevation: 0,
 
           // position: "absolute",

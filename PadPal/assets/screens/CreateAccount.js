@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View, Alert } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import { auth } from "../../firebase";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 import stylesGlobal from "../styles";
 import {
   createUserWithEmailAndPassword,
@@ -33,6 +33,7 @@ const CreateAccount = () => {
         // Signed in
         const user = userCredential.user;
         console.log("Registered with: " + user.email);
+        navigation.replace("Tabs");
       })
       .catch((error) => alert(error.message));
   };

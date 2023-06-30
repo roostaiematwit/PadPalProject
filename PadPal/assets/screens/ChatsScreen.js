@@ -55,6 +55,6 @@ export default ChatsScreen;
 const styles = StyleSheet.create({
   subtitle: {
     color: "gray",
-    fontSize: 12,
+    fontSize: 16,
   },
 });

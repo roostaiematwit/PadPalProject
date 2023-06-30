@@ -57,32 +57,32 @@ const MakePosts = ({ onAddPost }) => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <Input
-            placeholder="Enter title"
+            placeholder="Enter Title"
             value={title}
             onChangeText={(text) => setTitle(text)}
             leftIcon={{ type: "material-community", name: "format-title" }}
           />
           <Input
-            placeholder="Enter image URL (optional)"
+            placeholder="Enter Image URL (optional)"
             value={image}
             onChangeText={(text) => setImage(text)}
             leftIcon={{ type: "material", name: "image" }}
           />
           <Input
-            placeholder="Enter address"
+            placeholder="Enter Address"
             value={address}
             onChangeText={(text) => setAddress(text)}
             leftIcon={{ type: "material", name: "place" }}
           />
           <Input
-            placeholder="Enter people number"
+            placeholder="Enter # of People"
             value={people}
             onChangeText={(text) => setPeople(text)}
             keyboardType="numeric"
             leftIcon={{ type: "material-community", name: "account-multiple" }}
           />
           <Input
-            placeholder="Enter price per person"
+            placeholder="Enter Average Cost per Person"
             value={price}
             onChangeText={(text) => setPrice(text)}
             keyboardType="numeric"
