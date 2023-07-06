@@ -2,7 +2,7 @@ import { useFonts } from "expo-font";
 import React, { useState, useEffect, useRef } from "react";
 import { Animated, View, Text, StatusBar, Dimensions } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import LoginScreen from "./assets/screens/LoginScreen";
+// import LoginScreen from "./assets/screens/LoginScreen";
 import ProfileScreen from "./assets/screens/ProfileScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -10,6 +10,11 @@ import Tabs from "./assets/navigation/tabs";
 import PadPalAnimation from "./assets/animations/PadPalAnimation";
 import stylesGlobal from "./assets/styles";
 import CreateAccount from "./assets/screens/CreateAccount";
+
+//NEW CODE
+import RegisterScreen from "./components/Register";
+import LoginScreen from "./components/Login";
+import { auth } from "./firebase";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,9 +27,24 @@ export default function App() {
   //Opening Animation
   const [isAnimating, setIsAnimating] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { height } = Dimensions.get("window");
   const contentOpacity = useRef(new Animated.Value(0)).current;
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        setLoaded(true);
+        setIsLoggedIn(false);
+      } else {
+        setIsLoggedIn(true);
+        setLoaded(true);
+      }
+    });
+    return unsubscribe;
+  }, []);
 
   // Animation to have screen fade in after opening animation
   useEffect(() => {
@@ -42,6 +62,42 @@ export default function App() {
     return undefined;
   }
 
+  // Change state depending on if user is logged in or not
+  const state = () => {
+    if (!loaded) {
+      return (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Text>Loading...</Text>
+        </View>
+      );
+    }
+
+    if (!isLoggedIn) {
+      return (
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Register"
+              component={RegisterScreen}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      );
+    }
+    return (
+      <NavigationContainer>
+        <Tabs />
+      </NavigationContainer>
+    );
+  };
+
+  // APP wrapper
   return (
     <View style={{ flex: 1, backgroundColor: isDarkMode ? "#000" : "#fff" }}>
       <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
@@ -56,26 +112,14 @@ export default function App() {
         ) : (
           <>
             <Text style={{ ...stylesGlobal.title, bottom: -3 }}>PadPal</Text>
-            <Animated.View style={{ flex: 1, opacity: contentOpacity, backgroundColor: "#fff" }}>
-              <NavigationContainer>
-                <Stack.Navigator>
-                  <Stack.Screen
-                    name="Login"
-                    component={LoginScreen}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="CreateAccount"
-                    component={CreateAccount}
-                    options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="Tabs"
-                    component={Tabs}
-                    options={{ headerShown: false }}
-                  />
-                </Stack.Navigator>
-              </NavigationContainer>
+            <Animated.View
+              style={{
+                flex: 1,
+                opacity: contentOpacity,
+                backgroundColor: "#fff",
+              }}
+            >
+              {state()}
             </Animated.View>
           </>
         )}
@@ -85,8 +129,8 @@ export default function App() {
 }
 
 const styles = {
-  container:{
-    borderWidth:1,
-    borderColor: "red", 
-  }
+  container: {
+    borderWidth: 1,
+    borderColor: "red",
+  },
 };
