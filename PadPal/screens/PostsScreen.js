@@ -5,12 +5,20 @@ import React, {
   useContext,
   useReducer,
 } from "react";
-import { StyleSheet, Text, SafeAreaView, Animated, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  Animated,
+  View,
+  Button,
+} from "react-native";
 import PostsList from "../components/PostsList";
 import AddPosts from "../components/AddPosts";
-import { auth } from "../../firebase";
+import { auth } from "../firebase";
+import { AuthContext } from "../navigation/AuthProvider";
 
-import stylesGlobal from "../styles";
+import stylesGlobal from "../styles/styles";
 
 let nextId = 2;
 const initialPosts = [
@@ -34,6 +42,7 @@ const initialPosts = [
 
 export default PostsScreen = () => {
   const [posts, dispatch] = useReducer(postsReducer, initialPosts);
+  const { user, logout } = useContext(AuthContext);
 
   const handleAddPost = (post) => {
     dispatch({ type: "added", post: post });
@@ -50,7 +59,9 @@ export default PostsScreen = () => {
   return (
     <View style={stylesGlobal.innerContainer}>
       {/* <AddPosts onAddPost={handleAddPost} /> */}
-      <Text>{auth.currentUser?.email}</Text>
+      <Text>Welecome {user.email}</Text>
+      <Button title="Logout" onPress={() => logout()} />
+
       <PostsList
         posts={posts}
         onDelete={handleDeletePost}

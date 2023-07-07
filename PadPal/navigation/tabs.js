@@ -104,7 +104,7 @@ const Tabs = () => {
               }}
             >
               <Image
-                source={require("../icons/plus.png")}
+                source={require("../assets/icons/plus.png")}
                 style={{
                   width: 22,
                   height: 22,

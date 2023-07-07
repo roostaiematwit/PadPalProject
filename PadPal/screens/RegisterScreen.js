@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   View,
   Alert,
@@ -8,22 +9,24 @@ import {
   Keyboard,
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
-import stylesGlobal from "../assets/styles";
+import stylesGlobal from "../styles/styles";
 import { auth } from "../firebase";
 
-import { COLORS } from "../assets/constants/theme";
+import { COLORS } from "../styles/theme";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { AuthContext } from "../navigation/AuthProvider";
 
 const ICON_TYPE = "font-awesome";
 const ERROR_TITLE = "Error";
 
 export default RegisterScreen = (props) => {
+  const [user, setUser] = useState({ username: "", name: "", email: "" });
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
-  const [user, setUser] = useState({ username: "", name: "", email: "" });
+  const { register } = useContext(AuthContext);
 
   //Error Checking
   const validateFields = () => {
@@ -55,16 +58,11 @@ export default RegisterScreen = (props) => {
     if (!validateFields()) {
       return;
     }
-
-    createUserWithEmailAndPassword(auth, user.email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("Registered with: " + user.email);
-        addUser();
-      })
-      .catch((error) => alert(error.message));
+    console.log("Registering ", user.name, " as ", user.email);
+    register(user.email, password);
   };
 
+  //Firestore Functions
   const addUser = () => {
     const userDb = collection(db, "users");
     addDoc(userDb, {
@@ -75,9 +73,14 @@ export default RegisterScreen = (props) => {
   };
 
   return (
-    <View style={styles.screen}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -300}
+    >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Create an Account</Text>
           <Input
             placeholder="Username"
             leftIcon={{ type: ICON_TYPE, name: "user" }}
@@ -96,7 +99,7 @@ export default RegisterScreen = (props) => {
           />
           <Input
             placeholder="Email"
-            leftIcon={{ type: ICON_TYPE, name: "user" }}
+            leftIcon={{ type: ICON_TYPE, name: "envelope" }}
             containerStyle={styles.inputContainer}
             inputStyle={styles.input}
             onChangeText={(text) => setUser({ ...user, email: text })}
@@ -120,44 +123,46 @@ export default RegisterScreen = (props) => {
             onChangeText={(text) => setPasswordConfirm(text)}
             value={passwordConfirm}
           />
+
           <Button
             title="Create Account"
             type="outline"
             buttonStyle={styles.createButton}
             titleStyle={styles.createTitle}
-            onPress={() => onRegister()}
+            onPress={onRegister}
           />
         </View>
       </TouchableWithoutFeedback>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    justifyContent: "center",
-    backgroundColor: "white",
-  },
   container: {
-    ...stylesGlobal.container,
-    justifyContent: "center",
-    padding: 25,
-    marginBottom: 100,
-    backgroundColor: COLORS.background,
     flex: 1,
+    padding: 20,
+    backgroundColor: COLORS.background,
+  },
+  formContainer: {
+    marginTop: 20,
+  },
+  title: {
+    fontSize: 28,
+    marginBottom: 15,
+    color: COLORS.primary,
+    textAlign: "center",
   },
   inputContainer: {
-    marginBottom: 10,
+    marginBottom: 20,
   },
   input: {
     paddingLeft: 10,
+    color: COLORS.primary,
   },
   createButton: {
     backgroundColor: COLORS.primary,
     paddingVertical: 15,
     borderRadius: 50,
-    marginBottom: 15,
   },
   createTitle: {
     color: COLORS.white,

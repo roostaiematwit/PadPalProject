@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { Animated, View, StyleSheet } from "react-native";
-import stylesGlobal from "../styles";
+import stylesGlobal from "../../styles/styles";
 
 export default function PadPalAnimation({
   isAnimating,

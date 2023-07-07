@@ -1,5 +1,5 @@
 import React from "react";
-import stylesGlobal from "../styles";
+import stylesGlobal from "../styles/styles";
 import { View, StyleSheet } from "react-native";
 import { ListItem, Avatar } from "react-native-elements";
 

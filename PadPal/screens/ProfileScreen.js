@@ -3,7 +3,7 @@ import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { Avatar, Text, Button, Card } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useTheme } from "react-native-paper";
-import stylesGlobal, { showBorder } from "../styles";
+import stylesGlobal, { showBorder } from "../styles/styles";
 import PostsList from "../components/PostsList";
 
 const ProfileScreen = () => {

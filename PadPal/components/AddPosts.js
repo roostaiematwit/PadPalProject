@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
-import stylesGlobal from "../styles";
+import stylesGlobal from "../styles/styles";
 import { useTheme } from "react-native-paper";
 
 export default AddPosts = ({ onAddPost }) => {
