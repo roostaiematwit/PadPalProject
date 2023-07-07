@@ -12,18 +12,22 @@ import stylesGlobal from "../assets/styles";
 import { auth } from "../firebase";
 
 import { COLORS } from "../assets/constants/theme";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const ICON_TYPE = "font-awesome";
 const ERROR_TITLE = "Error";
 
 export default RegisterScreen = (props) => {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
 
+  const [user, setUser] = useState({ username: "", name: "", email: "" });
+
+  //Error Checking
   const validateFields = () => {
+    const { username, name, email } = user;
     if (
       name.length === 0 ||
       username.length === 0 ||
@@ -52,12 +56,22 @@ export default RegisterScreen = (props) => {
       return;
     }
 
-    createUserWithEmailAndPassword(auth, email, password)
+    createUserWithEmailAndPassword(auth, user.email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log("Registered with: " + user.email);
+        addUser();
       })
       .catch((error) => alert(error.message));
+  };
+
+  const addUser = () => {
+    const userDb = collection(db, "users");
+    addDoc(userDb, {
+      username: user.username,
+      name: user.name,
+      email: user.email,
+    });
   };
 
   return (
@@ -69,24 +83,24 @@ export default RegisterScreen = (props) => {
             leftIcon={{ type: ICON_TYPE, name: "user" }}
             containerStyle={styles.inputContainer}
             inputStyle={styles.input}
-            onChangeText={(text) => setUsername(text)}
-            value={username}
+            onChangeText={(text) => setUser({ ...user, username: text })}
+            value={user.username}
           />
           <Input
             placeholder="Name"
             leftIcon={{ type: ICON_TYPE, name: "user" }}
             containerStyle={styles.inputContainer}
             inputStyle={styles.input}
-            onChangeText={(text) => setName(text)}
-            value={name}
+            onChangeText={(text) => setUser({ ...user, name: text })}
+            value={user.name}
           />
           <Input
             placeholder="Email"
             leftIcon={{ type: ICON_TYPE, name: "user" }}
             containerStyle={styles.inputContainer}
             inputStyle={styles.input}
-            onChangeText={(text) => setEmail(text)}
-            value={email}
+            onChangeText={(text) => setUser({ ...user, email: text })}
+            value={user.email}
           />
           <Input
             placeholder="Password"

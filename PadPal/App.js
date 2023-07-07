@@ -1,20 +1,26 @@
 import { useFonts } from "expo-font";
 import React, { useState, useEffect, useRef } from "react";
-import { Animated, View, Text, StatusBar, Dimensions } from "react-native";
+import {
+  Animated,
+  View,
+  Text,
+  StatusBar,
+  Dimensions,
+  FlatList,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-// import LoginScreen from "./assets/screens/LoginScreen";
-import ProfileScreen from "./assets/screens/ProfileScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Tabs from "./assets/navigation/tabs";
 import PadPalAnimation from "./assets/animations/PadPalAnimation";
 import stylesGlobal from "./assets/styles";
-import CreateAccount from "./assets/screens/CreateAccount";
 
 //NEW CODE
 import RegisterScreen from "./components/Register";
 import LoginScreen from "./components/Login";
 import { auth } from "./firebase";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "./firebase";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +38,29 @@ export default function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loaded, setLoaded] = useState(false);
+
+  //Experiment firebase
+  const [people, setPeople] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const usersQuery = collection(db, "users");
+    onSnapshot(usersQuery, (snapshot) => {
+      let usersList = [];
+      snapshot.docs.map((doc) => usersList.push({ ...doc.data(), id: doc.id }));
+      setPeople(usersList);
+      setLoading(false);
+    });
+  }, []);
+
+  const renderItem = ({ item }) => {
+    return (
+      <View>
+        <Text>{item.username}</Text>
+      </View>
+    );
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -120,6 +149,20 @@ export default function App() {
               }}
             >
               {state()}
+              {/* <View
+                style={{
+                  justifyContent: "center",
+                  flex: 1,
+                  alignItems: "center",
+                }}
+              >
+                <Text> Hello Its me </Text>
+                <FlatList
+                  data={people}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item.id}
+                />
+              </View> */}
             </Animated.View>
           </>
         )}
