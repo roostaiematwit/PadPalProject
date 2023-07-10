@@ -1,13 +1,17 @@
-import React from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import React, {
+  useContext,
+} from "react";
+import { View, StyleSheet, SafeAreaView, ScrollView, Alert } from "react-native";
 import { Avatar, Text, Button, Card } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useTheme } from "react-native-paper";
 import stylesGlobal, { showBorder } from "../styles/styles";
 import PostsList from "../components/PostsList";
+import { AuthContext } from "../navigation/AuthProvider";
 
 const ProfileScreen = () => {
   const theme = useTheme();
+  const { user, logout } = useContext(AuthContext);
   return (
     <View style={stylesGlobal.innerContdainer}>
       <View style={styles.upperProfileSection}>
@@ -34,8 +38,7 @@ const ProfileScreen = () => {
 
           <View style={styles.userBioSection}>
             <Text style={styles.description}>
-              Pedro is a fire a developr no cap, he is a beast at coding and he
-              is a menace to society!
+              Pedro is a fire developer no cap, he is a beast at coding and a menace to society!
             </Text>
           </View>
 
@@ -61,6 +64,22 @@ const ProfileScreen = () => {
               ...styles.editButton,
               backgroundColor: theme.colors.primary,
             }}
+          />
+          <Button 
+            title="Logout"
+            buttonStyle={{
+              ...styles.editButton,
+              backgroundColor: theme.colors.primary,
+            }}
+            onPress={() => 
+              Alert.alert(
+                "Confirmation", "Are you sure you want to logout?",
+                [
+                  { text: "Yes", onPress: () => logout() },
+                  { text: "No" }
+                ]
+              )
+            } 
           />
         </ScrollView>
       </View>

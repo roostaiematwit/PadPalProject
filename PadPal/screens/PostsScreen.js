@@ -59,8 +59,7 @@ export default PostsScreen = () => {
   return (
     <View style={stylesGlobal.innerContainer}>
       {/* <AddPosts onAddPost={handleAddPost} /> */}
-      <Text>Welecome {user.email}</Text>
-      <Button title="Logout" onPress={() => logout()} />
+      <Text>Welcome {user.email}!</Text>
 
       <PostsList
         posts={posts}
