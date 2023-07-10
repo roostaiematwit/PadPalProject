@@ -9,6 +9,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import { auth } from "../firebase";
@@ -25,60 +26,64 @@ export default function LoginScreen(props) {
 
   const onSignIn = () => {
     console.log("Sign in clicked");
-    login(email, password);
+    if (email === "" || password === "") {
+      Alert.alert("Invalid Entry", "Please fill in all of the login fields.", [{ text: "OK" }])
+    } else {
+      login(email, password);
+    }
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <View style={styles.logoContainer}>
-          <Image
-            source={require("../assets/PPTemplogo.png")}
-            style={styles.logo}
-          />
-          <Text style={{ ...stylesGlobal.title, bottom: -3 }}>PadPal</Text>
-        </View>
-
-        <View>
-          <Input
-            placeholder="Email"
-            leftIcon={{ type: "font-awesome", name: "user" }}
-            containerStyle={styles.inputContainer}
-            inputStyle={styles.input}
-            onChangeText={setEmail}
-            value={email}
-          />
-          <Input
-            placeholder="Password"
-            leftIcon={{ type: "font-awesome", name: "lock" }}
-            secureTextEntry
-            containerStyle={styles.inputContainer}
-            inputStyle={styles.input}
-            onChangeText={setPassword}
-            value={password}
-          />
-          <Button
-            title="Login"
-            buttonStyle={styles.loginButton}
-            onPress={onSignIn}
-          />
-          <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
-            <Text style={styles.forgotText}>Forgot Password?</Text>
-          </TouchableOpacity>
-          <View style={styles.signUpView}>
-            <Text>Don't have an account?</Text>
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate("Register")}
-            >
-              <Text style={styles.singUpText}> Sign Up</Text>
-            </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("../assets/PPTemplogo.png")}
+              style={styles.logo}
+            />
+            <Text style={{ ...stylesGlobal.title, bottom: -3 }}>PadPal</Text>
           </View>
-        </View>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+
+          <View>
+            <Input
+              placeholder="Email"
+              autoCapitalize="none"
+              leftIcon={{ type: "font-awesome", name: "user" }}
+              containerStyle={styles.inputContainer}
+              inputStyle={styles.input}
+              onChangeText={setEmail}
+              value={email}
+            />
+            <Input
+              placeholder="Password"
+              leftIcon={{ type: "font-awesome", name: "lock" }}
+              secureTextEntry
+              containerStyle={styles.inputContainer}
+              inputStyle={styles.input}
+              onChangeText={setPassword}
+              value={password}
+            />
+            <Button
+              title="Login"
+              buttonStyle={styles.loginButton}
+              onPress={onSignIn}
+            />
+            <TouchableOpacity style={styles.forgotButton} onPress={() => { }}>
+              <Text style={styles.forgotText}>Forgot Password?</Text>
+            </TouchableOpacity>
+            <View style={styles.signUpView}>
+              <Text>Don't have an account?</Text>
+              <TouchableOpacity
+                onPress={() => props.navigation.navigate("Register")}
+              >
+                <Text style={styles.singUpText}> Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </View>
   );
 }
 

@@ -7,6 +7,7 @@ import {
   Alert,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
 import stylesGlobal from "../styles/styles";
@@ -73,6 +74,8 @@ export default RegisterScreen = (props) => {
   };
 
   return (
+    <View style={styles.container}>
+    <ScrollView>
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
@@ -83,6 +86,7 @@ export default RegisterScreen = (props) => {
           <Text style={styles.title}>Create an Account</Text>
           <Input
             placeholder="Username"
+            autoCapitalize="none"
             leftIcon={{ type: ICON_TYPE, name: "user" }}
             containerStyle={styles.inputContainer}
             inputStyle={styles.input}
@@ -99,6 +103,7 @@ export default RegisterScreen = (props) => {
           />
           <Input
             placeholder="Email"
+            autoCapitalize="none"
             leftIcon={{ type: ICON_TYPE, name: "envelope" }}
             containerStyle={styles.inputContainer}
             inputStyle={styles.input}
@@ -134,6 +139,8 @@ export default RegisterScreen = (props) => {
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+    </ScrollView>
+    </View>
   );
 };
 
