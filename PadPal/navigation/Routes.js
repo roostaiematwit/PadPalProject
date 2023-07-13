@@ -16,7 +16,8 @@ export default Routes = () => {
 
   // Handle user state changes
   const onAuthStateChanged = (user) => {
-    console.log("user", user, " has logged in");
+    if (user) console.log(user.email + " has logged in");
+
     setUser(user);
     if (initializing) setInitializing(false);
   };

@@ -14,7 +14,7 @@ const Landing = ({ user }) => {
   // Animation to have screen fade in after opening animation
   useEffect(() => {
     return () => {
-      console.log("Animation done");
+      console.log("PadPal Animation done");
       Animated.timing(contentOpacity, {
         toValue: 1,
         duration: 2500,

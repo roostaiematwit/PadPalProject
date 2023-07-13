@@ -176,7 +176,6 @@ const AppStack = () => {
 
   //Fade in animation
   useEffect(() => {
-    console.log("Animation started");
     Animated.timing(contentOpacity, {
       toValue: 1,
       duration: 3500,
