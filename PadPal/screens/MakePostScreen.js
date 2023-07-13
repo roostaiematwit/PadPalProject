@@ -127,7 +127,7 @@ const MakePosts = ({ onAddPost }) => {
     });
 
     if (!cameraResp.canceled) {
-      const image = cameraGal.assets[0];
+      const image = cameraResp.assets[0];
       console.log(
         " \n======\nAdded " + image.fileName.split(".")[0] + " to post\n======="
       );
