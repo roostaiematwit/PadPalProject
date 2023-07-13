@@ -128,8 +128,11 @@ const MakePosts = ({ onAddPost }) => {
 
     if (!cameraResp.canceled) {
       const image = cameraResp.assets[0];
+      const uri = image.uri;
       console.log(
-        " \n======\nAdded " + image.fileName.split(".")[0] + " to post\n======="
+        " \n======\nAdded " +
+          uri.substring(uri.lastIndexOf("/") + 1) +
+          " to post\n======="
       );
       setImage(image);
     }
@@ -149,8 +152,11 @@ const MakePosts = ({ onAddPost }) => {
 
     if (!cameraGal.canceled) {
       const image = cameraGal.assets[0];
+      const uri = image.uri;
       console.log(
-        " \n======\nAdded " + image.fileName.split(".")[0] + " to post\n======="
+        " \n======\nAdded " +
+          uri.substring(uri.lastIndexOf("/") + 1) +
+          " to post\n======="
       );
       setImage(image);
     }
