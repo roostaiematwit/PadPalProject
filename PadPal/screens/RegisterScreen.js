@@ -14,10 +14,10 @@ import stylesGlobal from "../styles/styles";
 import { auth } from "../firebase";
 
 import { COLORS } from "../styles/theme";
-import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { AuthContext } from "../navigation/AuthProvider";
+import { doc, setDoc } from "firebase/firestore";
+
 
 const ICON_TYPE = "font-awesome";
 const ERROR_TITLE = "Error";
@@ -60,16 +60,15 @@ export default RegisterScreen = (props) => {
       return;
     }
     console.log("Registering ", user.name, " as ", user.email);
-    register(user.email, password);
+    register(user.email, password, user.username, user.name);
   };
 
-  //Firestore Functions
-  const addUser = () => {
-    const userDb = collection(db, "users");
-    addDoc(userDb, {
-      username: user.username,
-      name: user.name,
+  //Firestore Functions -- UNUSED
+  const addUser = async () => {
+    await setDoc(doc(db, "users", user.email), {
       email: user.email,
+      name: user.name,
+      username: user.username,
     });
   };
 

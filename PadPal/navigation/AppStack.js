@@ -18,14 +18,42 @@ import ProfileScreen from "../screens/ProfileScreen";
 import ChatsScreen from "../screens/ChatsScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import MakePostScreen from "../screens/MakePostScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
+
+import { createStackNavigator } from "@react-navigation/stack";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const FeedStack = ({ navigation }) => {};
 
 const MessagesStack = ({ navigation }) => {};
 
-const ProfileStack = ({ navigation }) => {};
+const ProfileStack = ({ navigation }) => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="EditProfile"
+      component={EditProfileScreen}
+      options={{
+        headerTitle: 'Edit Profile',
+        headerBackTitleVisible: false,
+        headerTitleAlign: 'center',
+        headerStyle: {
+          backgroundColor: '#fff',
+          shadowColor: '#fff',
+          elevation: 0,
+        }
+      }}
+    />
+  </Stack.Navigator>
+);
 
 //Work in progress
 export const pages = () => {
@@ -128,8 +156,8 @@ export const pages = () => {
       />
 
       <Tab.Screen
-        name="Posts"
-        component={ProfileScreen}
+        name="UserProfile"
+        component={ProfileStack}
         options={{
           tabBarIcon: ({ color, size }) => (
             <>
