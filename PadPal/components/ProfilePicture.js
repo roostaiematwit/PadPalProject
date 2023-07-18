@@ -12,7 +12,7 @@ const ProfilePicture = ({ name, size = 50, color, imageUrl }) => {
     for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 8)];
     }
-    setBackgroundColor(color);
+    setBackgroundColor("#e62929");
   };
 
   // Generate a new random color when the name prop changes.

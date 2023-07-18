@@ -107,6 +107,7 @@ const MakePosts = ({ onAddPost }) => {
       console.log(uploadResponse);
       setImage(null);
       setProgress(0);
+      setUploading(false);
       return uploadResponse.downloadUrl;
     } catch (e) {
       console.log("error uploading img " + e.message);
