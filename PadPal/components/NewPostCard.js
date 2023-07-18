@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../styles/theme";
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
@@ -18,9 +18,14 @@ import {
   Divider,
 } from "../styles/FeedStyles";
 import { AuthContext } from "../navigation/AuthProvider";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import moment from "moment/moment";
+import ProfilePicture from "./ProfilePicture";
 
 const NewPostCard = ({ item, onDelete }) => {
   const { user } = useContext(AuthContext);
+  const [userData, setUserData] = useState(null);
   savedIcon = item.saved ? "heart" : "heart-outline";
   savedIconColor = item.saved ? COLORS.primary : "#333";
 
@@ -32,13 +37,33 @@ const NewPostCard = ({ item, onDelete }) => {
     savesText = " Save";
   }
 
+  const getUser = async () => {
+    try {
+      const docRef = doc(db, "users", item.userId);
+      const userEntry = await getDoc(docRef);
+      if (userEntry.exists()) {
+        console.log("Document data:", userEntry.data());
+        setUserData(userEntry.data());
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.log("Error fetching user:", error);
+    }
+  };
+
+  useState(() => {
+    getUser();
+  }, []);
+
   return (
     <Card>
       <UserInfo>
-        <UserImg source={{ uri: item.userImg }} />
+        {/* <UserImg source={{ uri: item.userImg }} /> */}
+        <ProfilePicture name={userData ? userData.name : ""} size={55} />
         <UserInfoText>
-          <UserName>{item.userName}</UserName>
-          <PostTime>{item.postTime.toString()}</PostTime>
+          <UserName> {userData ? userData.name : "Test"}</UserName>
+          <PostTime>{moment(item.postTime.toDate()).fromNow()}</PostTime>
         </UserInfoText>
       </UserInfo>
       <PostText>{item.post}</PostText>
