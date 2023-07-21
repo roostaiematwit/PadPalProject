@@ -16,6 +16,7 @@ import { COLORS } from "../styles/theme";
 import PostsScreen from "../screens/PostsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ChatsScreen from "../screens/ChatsScreen";
+import SingleChatScreen from "../screens/SingleChatScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import MakePostScreen from "../screens/MakePostScreen";
 
@@ -23,7 +24,19 @@ const Tab = createBottomTabNavigator();
 
 const FeedStack = ({ navigation }) => {};
 
-const MessagesStack = ({ navigation }) => {};
+const MessagesStack = ({ navigation }) => {
+  <Stack.Navigator>
+    <Stack.Screen name="Messages" component={MessagesScreen} />
+    <Stack.Screen
+      name="Chat"
+      component={ChatScreen}
+      options={({route}) => ({
+        title: route.params.userName,
+        headerBackTitleVisible: false,
+      })}
+    />
+  </Stack.Navigator>
+};
 
 const ProfileStack = ({ navigation }) => {};
 
