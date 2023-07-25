@@ -15,6 +15,9 @@ import {
   TextSection,
   UserName
 } from '../styles/MessageStyles';
+import { useNavigation } from "@react-navigation/core";
+import SingleChatScreen from "../screens/SingleChatScreen";
+
 
 const list = [
   {
@@ -41,7 +44,7 @@ const Messages = [
     userImg: require('../assets/users/user-3.jpg'),
     messageTime: '4 mins ago',
     messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
+      'I\'ve been in your walls for 3 days now',
   },
   {
     id: '2',
@@ -49,7 +52,7 @@ const Messages = [
     userImg: require('../assets/users/user-1.jpg'),
     messageTime: '2 hours ago',
     messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
+      'Can I bring my pet orangutan in the apartment?',
   },
   {
     id: '3',
@@ -57,7 +60,7 @@ const Messages = [
     userImg: require('../assets/users/user-4.jpg'),
     messageTime: '1 hours ago',
     messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
+      'So true bestie',
   },
   {
     id: '4',
@@ -65,7 +68,7 @@ const Messages = [
     userImg: require('../assets/users/user-6.jpg'),
     messageTime: '1 day ago',
     messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
+      'If you pick me then I\'ll give you my TJX employee discount',
   },
   {
     id: '5',
@@ -79,6 +82,7 @@ const Messages = [
 
 //END MARCO ADDING
 const ChatsScreen = () => {
+  const navigation = useNavigation();
   function getRandomColor() {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -98,7 +102,7 @@ const ChatsScreen = () => {
           data={Messages}
           keyExtractor={item=>item.id}
           renderItem={({item}) => (
-          <Card>
+          <Card onPress={() => navigation.navigate("SingleChat", { screen: "SingleChat", userName: item.userName })}>
             <UserInfo>
               <UserImgWrapper>
                 <UserImg source={item.userImg} />
