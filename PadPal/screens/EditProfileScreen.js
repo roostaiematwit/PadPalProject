@@ -8,26 +8,23 @@ import { Avatar, Text, Button, Card, Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useTheme } from "react-native-paper";
 import stylesGlobal, { showBorder } from "../styles/styles";
-import PostsList from "../components/PostsList";
 import { AuthContext } from "../navigation/AuthProvider";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  orderBy,
-} from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { doc, deleteDoc, getDoc, setDoc } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
+
 
 const EditProfileScreen = () => {
   const theme = useTheme();
   const { user, logout } = useContext(AuthContext);
+
   const [userInfo, setUserInfo] = useState({});
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getUser = async () => {
@@ -61,6 +58,8 @@ const EditProfileScreen = () => {
         username: userInfo.username,
       });
       console.log("User Info Updated");
+      navigation.navigate("UserProfile", { screen: "Profile" });
+
     } catch (error) {
       console.log("Error updating user info:", error);
     }

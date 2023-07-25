@@ -54,6 +54,7 @@ export default function LoginScreen(props) {
               inputStyle={styles.input}
               onChangeText={setEmail}
               value={email}
+              autoCorrect={false}
             />
             <Input
               placeholder="Password"

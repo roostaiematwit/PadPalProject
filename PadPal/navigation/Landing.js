@@ -17,7 +17,7 @@ const Landing = ({ user }) => {
       console.log("PadPal Animation done");
       Animated.timing(contentOpacity, {
         toValue: 1,
-        duration: 2500,
+        duration: 1500,
         useNativeDriver: false,
       }).start();
     };

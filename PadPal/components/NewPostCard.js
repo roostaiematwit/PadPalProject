@@ -21,7 +21,9 @@ import { AuthContext } from "../navigation/AuthProvider";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import moment from "moment/moment";
-import ProfilePicture from "./ProfilePicture";
+//import ProfilePicture from "./ProfilePicture";
+import { Platform } from "react-native";
+
 
 const NewPostCard = ({ item, onDelete }) => {
   const { user } = useContext(AuthContext);
@@ -57,7 +59,7 @@ const NewPostCard = ({ item, onDelete }) => {
   }, []);
 
   return (
-    <Card>
+    <Card style={styles.card}>
       <UserInfo>
         {/* <UserImg source={{ uri: item.userImg }} /> */}
         <ProfilePicture name={userData ? userData.name : ""} size={55} />
@@ -136,10 +138,24 @@ export default NewPostCard;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#E7E7E7",
     width: "100%",
     marginBottom: 20,
     borderRadius: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: "rgba(0, 0, 0, 0.4)",
+        shadowOpacity: 0.8,
+        shadowRadius: 4,
+        shadowOffset: {
+          width: 0,
+          height: 3,
+        },
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   userInfo: {
     flexDirection: "row",

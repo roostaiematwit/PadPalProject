@@ -25,6 +25,8 @@ import {
 } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { doc, deleteDoc, getDoc } from "firebase/firestore";
+import { useIsFocused } from '@react-navigation/native';
+
 
 const ProfileScreen = () => {
   const theme = useTheme();
@@ -36,6 +38,8 @@ const ProfileScreen = () => {
   const [postCount, setPostCount] = useState(0);
 
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -94,7 +98,7 @@ const ProfileScreen = () => {
       }
     };
     getUser();
-  }, []);
+  }, [isFocused]);
 
   const deletePost = async (postId) => {
     const postRef = doc(db, "posts", postId);
@@ -145,8 +149,8 @@ const ProfileScreen = () => {
                 containerStyle={{ backgroundColor: "#e62929" }}
               />
               <View style={{ marginLeft: 20 }}>
-                <Text h4>{userInfo.name}</Text>
-                <Text h6 style={{ color: "grey" }}>
+                <Text h3>{userInfo.name}</Text>
+                <Text h5 style={{ color: "grey" }}>
                   @{userInfo.username}
                 </Text>
               </View>
@@ -167,9 +171,9 @@ const ProfileScreen = () => {
               </Text>
             </View>
             <View style={styles.infoBox}>
-              <Text style={styles.infoBoxTitle}>Followers</Text>
+              <Text style={styles.infoBoxTitle}>Saved Posts</Text>
               <Text h4 style={styles.infoBoxValue}>
-                534
+                0
               </Text>
             </View>
           </View>
@@ -198,14 +202,16 @@ const ProfileScreen = () => {
               ])
             }
           />
-          <Text style={styles.postsTitle}>My Posts</Text>
-          {posts.map((item) => (
-            <NewPostCard
-              key={item.id}
-              item={item}
-              onDelete={handleDeleteClicked}
-            />
-          ))}
+          <View style={styles.postsContainer}>
+            <Text style={styles.postsTitle}>My Posts</Text>
+            {posts.map((item) => (
+              <NewPostCard
+                key={item.id}
+                item={item}
+                onDelete={handleDeleteClicked}
+              />
+            ))}
+          </View>
         </ScrollView>
       </View>
 
@@ -255,7 +261,7 @@ const styles = StyleSheet.create({
     borderWidth: showBorder,
   },
   infoBox: {
-    width: "50%",
+    width: "48%",
     alignItems: "center",
     justifyContent: "center",
 
@@ -278,6 +284,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
     marginVertical: 20,
   },
+  postsContainer: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderTopColor: "#dddddd",
+    borderTopWidth: 1,
+    marginBottom: 10,
+  }
 });
 
 export default ProfileScreen;
