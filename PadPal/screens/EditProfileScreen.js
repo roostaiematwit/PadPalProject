@@ -13,6 +13,7 @@ import { db, storage } from "../firebase";
 import { doc, deleteDoc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
+
 const EditProfileScreen = () => {
   const theme = useTheme();
   const { user, logout } = useContext(AuthContext);
@@ -58,6 +59,7 @@ const EditProfileScreen = () => {
       });
       console.log("User Info Updated");
       navigation.navigate("UserProfile", { screen: "Profile" });
+
     } catch (error) {
       console.log("Error updating user info:", error);
     }

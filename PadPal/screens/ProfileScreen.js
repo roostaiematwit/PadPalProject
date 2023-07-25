@@ -1,9 +1,11 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView, Alert } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Alert,
+} from "react-native";
 import { Avatar, Text, Button, Card } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useTheme } from "react-native-paper";
@@ -14,10 +16,17 @@ import EditProfileScreen from "./EditProfileScreen";
 import { useNavigation } from "@react-navigation/native";
 import { Firestore } from "firebase/firestore";
 import NewPostCard from "../components/NewPostCard";
-import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { doc, deleteDoc, getDoc } from "firebase/firestore";
 import { useIsFocused } from '@react-navigation/native';
+
 
 const ProfileScreen = () => {
   const theme = useTheme();
@@ -31,10 +40,15 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const q = query(collection(db, "posts"), where("userId", "==", user.uid), orderBy("postTime", "desc"));
+        const q = query(
+          collection(db, "posts"),
+          where("userId", "==", user.uid),
+          orderBy("postTime", "desc")
+        );
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const postsList = [];
           querySnapshot.forEach((doc) => {
@@ -82,7 +96,7 @@ const ProfileScreen = () => {
       } catch (error) {
         console.log("Error fetching user:", error);
       }
-    }
+    };
     getUser();
   }, [isFocused]);
 
@@ -130,9 +144,9 @@ const ProfileScreen = () => {
                 size={100}
                 // source={{
                 //   uri: "https://example.com/user-profile.jpg",
-                // }} 
+                // }}
                 title={userInfo.name?.substring(0, 1)}
-                containerStyle={{ backgroundColor: "gray" }}
+                containerStyle={{ backgroundColor: "#e62929" }}
               />
               <View style={{ marginLeft: 20 }}>
                 <Text h3>{userInfo.name}</Text>
@@ -171,7 +185,9 @@ const ProfileScreen = () => {
               ...styles.editButton,
               backgroundColor: theme.colors.primary,
             }}
-            onPress={() => navigation.navigate('UserProfile', { screen: 'EditProfile' })}
+            onPress={() =>
+              navigation.navigate("UserProfile", { screen: "EditProfile" })
+            }
           />
           <Button
             title="Logout"
@@ -180,13 +196,10 @@ const ProfileScreen = () => {
               backgroundColor: theme.colors.primary,
             }}
             onPress={() =>
-              Alert.alert(
-                "Confirmation", "Are you sure you want to logout?",
-                [
-                  { text: "Yes", onPress: () => logout() },
-                  { text: "No" }
-                ]
-              )
+              Alert.alert("Confirmation", "Are you sure you want to logout?", [
+                { text: "Yes", onPress: () => logout() },
+                { text: "No" },
+              ])
             }
           />
           <View style={styles.postsContainer}>
@@ -218,7 +231,7 @@ const styles = StyleSheet.create({
   postsTitle: {
     padding: 25,
     fontSize: 28,
-    textAlign: 'center',
+    textAlign: "center",
   },
   lowerProfileSection: {
     marginVertical: 20,
