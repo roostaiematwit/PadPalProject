@@ -116,7 +116,7 @@ export default PostsScreen = () => {
   };
 
   return (
-    <Container>
+    <Container style={styles.cardsContainer}>
       <CenterText>Welcome {user.email}!</CenterText>
       {posts.length == 0 ? (
         <CenterText>No posts to show</CenterText>
@@ -138,6 +138,7 @@ export default PostsScreen = () => {
 const styles = StyleSheet.create({
   cardsContainer: {
     flex: 1,
+    padding: 10,
   },
   safeArea: {
     flex: 1,

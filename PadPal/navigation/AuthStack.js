@@ -63,7 +63,7 @@ export default AuthStack = () => {
   useEffect(() => {
     Animated.timing(contentOpacity, {
       toValue: 1,
-      duration: 3500,
+      duration: 1000,
       useNativeDriver: false,
     }).start();
   }, []);
