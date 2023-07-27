@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "../styles/theme";
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
@@ -23,7 +23,7 @@ import { doc, getDoc } from "firebase/firestore";
 import moment from "moment/moment";
 import ProfilePicture from "./ProfilePicture";
 import { Platform } from "react-native";
-
+import { getUser } from "../firebase/firebaseMethods";
 
 const NewPostCard = ({ item, onDelete }) => {
   const { user } = useContext(AuthContext);
@@ -39,24 +39,15 @@ const NewPostCard = ({ item, onDelete }) => {
     savesText = " Save";
   }
 
-  const getUser = async () => {
-    try {
-      const docRef = doc(db, "users", item.userId);
-      const userEntry = await getDoc(docRef);
-      if (userEntry.exists()) {
-        console.log("Document data:", userEntry.data());
-        setUserData(userEntry.data());
-      } else {
-        console.log("No such document!");
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (item && item.userId) {
+        const user = await getUser(item.userId);
+        setUserData(user);
       }
-    } catch (error) {
-      console.log("Error fetching user:", error);
-    }
-  };
-
-  useState(() => {
-    getUser();
-  }, []);
+    };
+    fetchUserData();
+  }, [item]);
 
   return (
     <Card style={styles.card}>

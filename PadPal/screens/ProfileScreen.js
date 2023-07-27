@@ -10,7 +10,6 @@ import { Avatar, Text, Button, Card } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useTheme } from "react-native-paper";
 import stylesGlobal, { showBorder } from "../styles/styles";
-import PostsList from "../components/PostsList";
 import { AuthContext } from "../navigation/AuthProvider";
 import EditProfileScreen from "./EditProfileScreen";
 import { useNavigation } from "@react-navigation/native";
@@ -25,8 +24,8 @@ import {
 } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { doc, deleteDoc, getDoc } from "firebase/firestore";
-import { useIsFocused } from '@react-navigation/native';
-
+import { useIsFocused } from "@react-navigation/native";
+import { getUser, getPosts } from "../firebase/firebaseMethods";
 
 const ProfileScreen = () => {
   const theme = useTheme();
@@ -39,7 +38,6 @@ const ProfileScreen = () => {
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -100,6 +98,43 @@ const ProfileScreen = () => {
     getUser();
   }, [isFocused]);
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  // useEffect(() => {
+  //   let unsubscribe = null;
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const { postsList, unsubscribe: unsub } = await getPosts(user.uid);
+  //       setPostCount(postsList.length);
+  //       setPosts(postsList);
+  //       if (loading) {
+  //         setLoading(false);
+  //       }
+  //       unsubscribe = unsub;
+  //     } catch (error) {
+  //       console.log("Error fetching posts: ", error);
+  //     }
+  //   };
+  //   fetchPosts();
+
+  //   const fetchUser = async () => {
+  //     try {
+  //       const userInfo = await getUser(user.uid);
+  //       if (userInfo) {
+  //         setUserInfo(userInfo);
+  //       } else {
+  //         console.log("No such user!");
+  //       }
+  //     } catch (error) {
+  //       console.log("Error fetching user:", error);
+  //     }
+  //   };
+  //   fetchUser();
+
+  //   // Clean up the subscription on unmount
+  //   return () => unsubscribe && unsubscribe();
+  // }, [isFocused]);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
   const deletePost = async (postId) => {
     const postRef = doc(db, "posts", postId);
 
@@ -290,7 +325,7 @@ const styles = StyleSheet.create({
     borderTopColor: "#dddddd",
     borderTopWidth: 1,
     marginBottom: 10,
-  }
+  },
 });
 
 export default ProfileScreen;

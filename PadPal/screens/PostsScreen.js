@@ -6,6 +6,7 @@ import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 import { AuthContext } from "../navigation/AuthProvider";
+import { getPosts } from "../firebase/firebaseMethods";
 
 const Posts = [
   {
@@ -46,37 +47,17 @@ export default PostsScreen = () => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
+    let unsubscribe = null;
     const fetchPosts = async () => {
       try {
-        const q = query(collection(db, "posts"), orderBy("postTime", "desc"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          const postsList = [];
-          querySnapshot.forEach((doc) => {
-            const { userId, post, postImg, postTime, saves } = doc.data();
-            postsList.push({
-              id: doc.id,
-              userId: userId,
-              userName: "Test Name",
-              userImg:
-                "https://firebasestorage.googleapis.com/v0/b/padpal-ba095.appspot.com/o/images%2F15CD67AB-C41A-41E6-A454-74922A6BE0E7.jpg?alt=media&token=096e0146-7fa2-458b-99c1-d7b3708fe50d",
-              postTime: postTime,
-              post: post,
-              postImg: postImg,
-              saved: false,
-              saves: "0",
-            });
-          });
-
-          setPosts(postsList);
-          if (loading) {
-            setLoading(false);
-          }
-          // Console log only the IDs
-          const ids = postsList.map((post) => post.id);
-          console.log("Post IDs: ", ids);
-        });
+        const { postsList, unsubscribe } = await getPosts();
+        setPosts(postsList);
+        if (loading) {
+          setLoading(false);
+        }
+        return unsubscribe;
       } catch (error) {
-        console.log(error);
+        console.log("Error fetching posts: ", error);
       }
     };
     fetchPosts();
