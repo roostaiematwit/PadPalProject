@@ -21,7 +21,7 @@ import { AuthContext } from "../navigation/AuthProvider";
 import { db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import moment from "moment/moment";
-//import ProfilePicture from "./ProfilePicture";
+import ProfilePicture from "./ProfilePicture";
 import { Platform } from "react-native";
 
 
