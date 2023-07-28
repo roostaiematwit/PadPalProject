@@ -17,7 +17,21 @@ import {
 } from '../styles/MessageStyles';
 import { useNavigation } from "@react-navigation/core";
 import SingleChatScreen from "../screens/SingleChatScreen";
+import { getDatabase, get } from 'firebase/database';
 
+const onChatStarted = async () => {
+  try {
+    const database = getDatabase();
+  }
+  catch {
+
+  }
+}
+
+const findUser = async(name) => {
+  const database = getDatabase();
+  const mySnapshot = await get(ref(database, `users/${userName}`));
+}
 
 const list = [
   {

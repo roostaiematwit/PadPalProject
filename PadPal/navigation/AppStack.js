@@ -196,7 +196,7 @@ export const pages = () => {
     ? route.state.routes[route.state.index].name 
     : '' || 'Home'
 
-    if(routeName === 'SingleChat')
+    if(routeName == 'SingleChat')
       return false;
     return true;
   }
@@ -204,7 +204,15 @@ export const pages = () => {
 
 const AppStack = () => {
   const contentOpacity = useRef(new Animated.Value(0)).current;
+  const getTabBarVisibility = (route) => {
+    const routeName = route.state
+      ? route.state.routes[route.state.index].name
+      : ''
 
+    if(routeName == 'SingleChat')
+      return false;
+    return true;
+  }
   //Fade in animation
   useEffect(() => {
     Animated.timing(contentOpacity, {
