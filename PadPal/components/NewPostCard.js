@@ -50,7 +50,7 @@ const NewPostCard = ({ item, onDelete }) => {
   }, [item]);
 
   return (
-    <Card style={styles.card}>
+    <Card>
       <UserInfo>
         {/* <UserImg source={{ uri: item.userImg }} /> */}
         <ProfilePicture name={userData ? userData.name : ""} size={55} />

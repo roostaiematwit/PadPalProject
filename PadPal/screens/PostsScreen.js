@@ -2,11 +2,10 @@ import React, { useEffect, useState, useContext } from "react";
 import { StyleSheet, Text, FlatList, Alert } from "react-native";
 import { Container, CenterText } from "../styles/FeedStyles";
 import NewPostCard from "../components/NewPostCard";
-import { collection, query, onSnapshot, orderBy } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 import { AuthContext } from "../navigation/AuthProvider";
-import { getPosts } from "../firebase/firebaseMethods";
+import { getPosts, deletePost } from "../firebase/firebaseMethods";
 import { useIsFocused } from "@react-navigation/native";
 
 export default PostsScreen = () => {
@@ -26,16 +25,6 @@ export default PostsScreen = () => {
     // Clean up the subscription on unmount
     return () => unsubscribe && unsubscribe();
   }, []);
-
-  const deletePost = async (postId) => {
-    const postRef = doc(db, "posts", postId);
-    try {
-      await deleteDoc(postRef);
-      console.log(`Document with ID ${postId} deleted.`);
-    } catch (error) {
-      console.error(`Error deleting document with ID ${postId}:`, error);
-    }
-  };
 
   const handleDeleteClicked = (postId) => {
     console.log("Delete clicked for post: ", postId);

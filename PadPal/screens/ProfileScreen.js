@@ -17,7 +17,7 @@ import NewPostCard from "../components/NewPostCard";
 import { db, storage } from "../firebase";
 import { doc, deleteDoc, getDoc } from "firebase/firestore";
 import { useIsFocused } from "@react-navigation/native";
-import { getUser, getPosts } from "../firebase/firebaseMethods";
+import { getUser, getPosts, deletePost } from "../firebase/firebaseMethods";
 
 const ProfileScreen = () => {
   const theme = useTheme();
@@ -53,16 +53,6 @@ const ProfileScreen = () => {
     };
     fetchUser();
   }, [isFocused]);
-
-  const deletePost = async (postId) => {
-    const postRef = doc(db, "posts", postId);
-    try {
-      await deleteDoc(postRef);
-      console.log(`Document with ID ${postId} deleted.`);
-    } catch (error) {
-      console.error(`Error deleting document with ID ${postId}:`, error);
-    }
-  };
 
   const handleDeleteClicked = (postId) => {
     console.log("Delete clicked for post: ", postId);

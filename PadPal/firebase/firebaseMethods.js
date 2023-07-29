@@ -1,14 +1,24 @@
 import {
   doc,
+  deleteDoc,
+  addDoc,
   getDoc,
   query,
   collection,
   onSnapshot,
   orderBy,
   where,
+  Timestamp,
 } from "firebase/firestore";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import { db } from "../firebase";
 
+// Returns user object from firestore
 export const getUser = async (userId) => {
   try {
     const docRef = doc(db, "users", userId);
@@ -74,4 +84,64 @@ export const getPosts = (callback, userId) => {
 
 export const getSavedPosts = (callback, userId) => {};
 
-export const deletePost = async (postId) => {};
+//Delete post from firestore
+export const deletePost = async (postId) => {
+  const postRef = doc(db, "posts", postId);
+  try {
+    await deleteDoc(postRef);
+    console.log(`Document with ID ${postId} deleted.`);
+  } catch (error) {
+    console.error(`Error deleting document with ID ${postId}:`, error);
+  }
+};
+
+//Add post and Image to firestore
+export const addPostToFirestore = async (userId, post, imageUrl) => {
+  try {
+    const docRef = await addDoc(collection(db, "posts"), {
+      userId: userId,
+      post: post,
+      postImg: imageUrl,
+      postTime: Timestamp.fromDate(new Date()),
+      saves: null,
+    });
+    console.log("Post successfully written!");
+    return true;
+  } catch (error) {
+    console.error("Error adding document: ", error);
+    return false;
+  }
+};
+
+//Upload image to firebase storage
+export const uploadImageToFirebase = async (uri, name, onProgress) => {
+  const fetchResponse = await fetch(uri);
+  const blob = await fetchResponse.blob(); //blobl is what we want to upload to firebase
+
+  const imageRef = ref(getStorage(), `images/${name}`);
+  const uploadTask = uploadBytesResumable(imageRef, blob);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        onProgress && onProgress(progress);
+        console.log("Upload is " + progress + "% done");
+      },
+      (error) => {
+        // Handle unsuccessful uploads
+        reject(error);
+      },
+      async () => {
+        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+        resolve({
+          downloadUrl,
+          metadata: uploadTask.snapshot.metadata,
+        });
+      }
+    );
+  });
+};

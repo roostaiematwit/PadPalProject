@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Text, Image } from "react-native";
 import {
   View,
   StyleSheet,
@@ -7,6 +6,7 @@ import {
   ActivityIndicator,
   TouchableWithoutFeedback,
   Keyboard,
+  Text,
 } from "react-native";
 import {
   InputField,
@@ -22,8 +22,10 @@ import ActionButton from "react-native-action-button";
 import Icon from "react-native-vector-icons/Ionicons";
 import { COLORS } from "../styles/theme";
 import * as ImagePicker from "expo-image-picker";
-import { uploadToFirebase, db } from "../firebase";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import {
+  uploadImageToFirebase,
+  addPostToFirestore,
+} from "../firebase/firebaseMethods";
 import { AuthContext } from "../navigation/AuthProvider";
 
 const MakePosts = ({ onAddPost }) => {
@@ -61,38 +63,16 @@ const MakePosts = ({ onAddPost }) => {
       return;
     }
 
-    try {
-      const docRef = await addDoc(collection(db, "posts"), {
-        userId: user.uid,
-        post: post,
-        postImg: imageUrl,
-        postTime: Timestamp.fromDate(new Date()),
-        saves: null,
-      })
-        .then(() => {
-          setPost(null);
-          console.log("Post successfully written!");
-          Alert.alert(
-            "File uploaded",
-            "Your file has been uploaded successfully"
-          );
-        })
-        .catch((error) => {
-          console.error(
-            "Something went wrong adding post to firestore: ",
-            error
-          );
-        });
-    } catch (e) {
-      console.error("Error adding document: ", e);
+    const result = await addPostToFirestore(user.uid, post, imageUrl);
+    if (result) {
+      setPost(null);
+      Alert.alert("File uploaded", "Your file has been uploaded successfully");
+    } else {
+      console.error("Something went wrong adding post to firestore");
     }
   };
 
   const uploadImage = async () => {
-    /////////////////////////////////////////
-    //May be broken, because i changed it lol
-    /////////////////////////////////////////
-
     if (image == null) return null;
 
     const { uri } = image;
@@ -101,8 +81,10 @@ const MakePosts = ({ onAddPost }) => {
     setUploading(true);
 
     try {
-      const uploadResponse = await uploadToFirebase(uri, filename, (progress) =>
-        setProgress(progress)
+      const uploadResponse = await uploadImageToFirebase(
+        uri,
+        filename,
+        (progress) => setProgress(progress)
       );
       console.log(uploadResponse);
       setImage(null);
@@ -235,71 +217,3 @@ const styles = StyleSheet.create({
 });
 
 export default MakePosts;
-
-// return (
-//   <ThemeProvider theme={theme}>
-//     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-//       <View style={styles.container}>
-//         <Input
-//           placeholder="Enter Title"
-//           value={title}
-//           onChangeText={(text) => setTitle(text)}
-//           leftIcon={{ type: "material-community", name: "format-title" }}
-//         />
-//         <Input
-//           placeholder="Enter Image URL (optional)"
-//           value={image}
-//           onChangeText={(text) => setImage(text)}
-//           leftIcon={{ type: "material", name: "image" }}
-//         />
-//         <Input
-//           placeholder="Enter Address"
-//           value={address}
-//           onChangeText={(text) => setAddress(text)}
-//           leftIcon={{ type: "material", name: "place" }}
-//         />
-//         <Input
-//           placeholder="Enter # of People"
-//           value={people}
-//           onChangeText={(text) => setPeople(text)}
-//           keyboardType="numeric"
-//           leftIcon={{ type: "material-community", name: "account-multiple" }}
-//         />
-//         <Input
-//           placeholder="Enter Average Cost per Person"
-//           value={price}
-//           onChangeText={(text) => setPrice(text)}
-//           keyboardType="numeric"
-//           leftIcon={{ type: "material-community", name: "cash" }}
-//         />
-//         <DateTimePicker
-//           value={date}
-//           onChange={(event, selectedDate) => setDate(selectedDate)}
-//           mode="date"
-//           display="default"
-//         />
-//         <Input
-//           placeholder="Enter content"
-//           value={content}
-//           onChangeText={(text) => setContent(text)}
-//           multiline={true}
-//           numberOfLines={4}
-//           leftIcon={{ type: "material-community", name: "text-box" }}
-//         />
-//         <Button
-//           title="Post"
-//           onPress={handleSubmit}
-//           icon={
-//             <Icon
-//               name="send"
-//               size={20}
-//               color="white"
-//               type="material"
-//               style={{ marginRight: 10 }}
-//             />
-//           }
-//         />
-//       </View>
-//     </TouchableWithoutFeedback>
-//   </ThemeProvider>
-// );

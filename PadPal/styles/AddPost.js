@@ -1,6 +1,25 @@
 import styled from "styled-components";
 import { COLORS } from "../styles/theme";
 
+export const Container = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const StyledButton = styled.TouchableOpacity`
+  background-color: #4f6d7a;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  align-items: center;
+`;
+
+export const ButtonText = styled.Text`
+  color: #fff;
+  font-size: 18px;
+`;
+
 export const InputWrapper = styled.View`
   flex: 1;
   justify-content: center;

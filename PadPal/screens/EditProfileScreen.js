@@ -1,9 +1,12 @@
-import React, {
-  useContext,
-  useState,
-  useEffect,
-} from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView, Alert, KeyboardAvoidingView } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
+} from "react-native";
 import { Avatar, Text, Button, Card, Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useTheme } from "react-native-paper";
@@ -12,7 +15,7 @@ import { AuthContext } from "../navigation/AuthProvider";
 import { db, storage } from "../firebase";
 import { doc, deleteDoc, getDoc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
-
+import { getUser } from "../firebase/firebaseMethods";
 
 const EditProfileScreen = () => {
   const theme = useTheme();
@@ -27,21 +30,11 @@ const EditProfileScreen = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const docRef = doc(db, "users", user.uid);
-        const userEntry = await getDoc(docRef);
-        if (userEntry.exists()) {
-          console.log("Document data:", userEntry.data());
-          setUserInfo(userEntry.data());
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.log("Error fetching user:", error);
-      }
+    const fetchUser = async () => {
+      const fetchedUser = await getUser(user.uid);
+      setUserInfo(fetchedUser);
     };
-    getUser();
+    fetchUser();
 
     setTimeout(() => {
       setName(userInfo.name);
@@ -59,11 +52,10 @@ const EditProfileScreen = () => {
       });
       console.log("User Info Updated");
       navigation.navigate("UserProfile", { screen: "Profile" });
-
     } catch (error) {
       console.log("Error updating user info:", error);
     }
-  }
+  };
 
   return (
     <ScrollView>
@@ -79,15 +71,17 @@ const EditProfileScreen = () => {
             placeholder="Name"
             autoCorrect={false}
             leftIcon={{ type: "font-awesome", name: "user" }}
-            value={userInfo ? userInfo.name : ''}
-            onChangeText={(text) => setUserInfo({...userInfo, name: text})}
+            value={userInfo ? userInfo.name : ""}
+            onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
           />
           <Input
             placeholder="Username"
             autoCorrect={false}
             leftIcon={{ type: "font-awesome", name: "at" }}
-            value={userInfo ? userInfo.username : ''}
-            onChangeText={(text) => setUserInfo({...userInfo, username: text})}
+            value={userInfo ? userInfo.username : ""}
+            onChangeText={(text) =>
+              setUserInfo({ ...userInfo, username: text })
+            }
           />
           <Input
             placeholder="Location"
@@ -108,8 +102,9 @@ const EditProfileScreen = () => {
             buttonStyle={{
               ...styles.editButton,
               backgroundColor: theme.colors.primary,
-            }} 
-            onPress={handleUpdate} />
+            }}
+            onPress={handleUpdate}
+          />
         </View>
       </KeyboardAvoidingView>
     </ScrollView>
