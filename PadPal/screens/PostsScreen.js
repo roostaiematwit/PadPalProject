@@ -7,65 +7,28 @@ import { db, storage } from "../firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 import { AuthContext } from "../navigation/AuthProvider";
 import { getPosts } from "../firebase/firebaseMethods";
-
-const Posts = [
-  {
-    id: 1,
-    userName: "Nick",
-    userImg: require("../assets/users/user1.png"),
-    postTime: "4 mins ago",
-    post: "This is a test post to see how stuff works and it dodesnt faiul",
-    postImg: require("../assets/posts/Room1.png"),
-    saved: true,
-    saves: 12,
-  },
-  {
-    id: 2,
-    userName: "Pedro",
-    userImg: require("../assets/users/user2.png"),
-    postTime: "1 hour ago",
-    post: "Post 2",
-    postImg: require("../assets/posts/Room2.png"),
-    saved: false,
-    saves: 1,
-  },
-  {
-    id: 3,
-    userName: "Marco",
-    userImg: require("../assets/users/user2.png"),
-    postTime: "1 hour ago",
-    post: "Post 2",
-    postImg: "none",
-    saved: false,
-    saves: 1,
-  },
-];
+import { useIsFocused } from "@react-navigation/native";
 
 export default PostsScreen = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    let unsubscribe = null;
-    const fetchPosts = async () => {
-      try {
-        const { postsList, unsubscribe } = await getPosts();
-        setPosts(postsList);
-        if (loading) {
-          setLoading(false);
-        }
-        return unsubscribe;
-      } catch (error) {
-        console.log("Error fetching posts: ", error);
+    const unsubscribe = getPosts((postsList) => {
+      setPosts(postsList);
+      if (loading) {
+        setLoading(false);
       }
-    };
-    fetchPosts();
+    });
+
+    // Clean up the subscription on unmount
+    return () => unsubscribe && unsubscribe();
   }, []);
 
   const deletePost = async (postId) => {
     const postRef = doc(db, "posts", postId);
-
     try {
       await deleteDoc(postRef);
       console.log(`Document with ID ${postId} deleted.`);
