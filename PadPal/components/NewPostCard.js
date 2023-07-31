@@ -25,7 +25,7 @@ import ProfilePicture from "./ProfilePicture";
 import { Platform } from "react-native";
 import { getUser } from "../firebase/firebaseMethods";
 
-const NewPostCard = ({ item, onDelete }) => {
+const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
   const { user } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
   savedIcon = item.saved ? "heart" : "heart-outline";
@@ -51,14 +51,16 @@ const NewPostCard = ({ item, onDelete }) => {
 
   return (
     <Card>
-      <UserInfo>
-        {/* <UserImg source={{ uri: item.userImg }} /> */}
-        <ProfilePicture name={userData ? userData.name : ""} size={55} />
-        <UserInfoText>
-          <UserName> {userData ? userData.name : "Test"}</UserName>
-          <PostTime>{moment(item.postTime.toDate()).fromNow()}</PostTime>
-        </UserInfoText>
-      </UserInfo>
+      <TouchableOpacity onPress={() => console.log(item)}>
+        <UserInfo>
+          {/* <UserImg source={{ uri: item.userImg }} /> */}
+          <ProfilePicture name={userData ? userData.name : ""} size={55} />
+          <UserInfoText>
+            <UserName> {userData ? userData.name : "Test"}</UserName>
+            <PostTime>{moment(item.postTime.toDate()).fromNow()}</PostTime>
+          </UserInfoText>
+        </UserInfo>
+      </TouchableOpacity>
       <PostText>{item.post}</PostText>
       {item.postImg != null ? (
         <PostImg source={{ uri: item.postImg }} />
@@ -67,7 +69,7 @@ const NewPostCard = ({ item, onDelete }) => {
       )}
 
       <InteractionWrapper>
-        <Interaction active={item.saved}>
+        <Interaction active={item.saved} onPress={() => onSaved(item.id)}>
           <Ionicons name={savedIcon} size={25} color={savedIconColor} />
           <InteractionText active={item.saved}>{savesText}</InteractionText>
         </Interaction>

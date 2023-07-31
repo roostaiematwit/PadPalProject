@@ -1,12 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
-import { StyleSheet, Text, FlatList, Alert } from "react-native";
-import { Container, CenterText } from "../styles/FeedStyles";
+import {
+  StyleSheet,
+  Text,
+  FlatList,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { Container, CenterText, StatusWrapper } from "../styles/FeedStyles";
 import NewPostCard from "../components/NewPostCard";
-import { db, storage } from "../firebase";
-import { doc, deleteDoc } from "firebase/firestore";
 import { AuthContext } from "../navigation/AuthProvider";
-import { getPosts, deletePost } from "../firebase/firebaseMethods";
+import { getPosts, deletePost, savePost } from "../firebase/firebaseMethods";
 import { useIsFocused } from "@react-navigation/native";
+import { COLORS } from "../styles/theme";
 
 export default PostsScreen = () => {
   const [posts, setPosts] = useState([]);
@@ -25,6 +30,11 @@ export default PostsScreen = () => {
     // Clean up the subscription on unmount
     return () => unsubscribe && unsubscribe();
   }, []);
+
+  const handleSavedClicked = (postId) => {
+    console.log("Saved clicked for post: ", postId);
+    savePost(postId, user.uid, true);
+  };
 
   const handleDeleteClicked = (postId) => {
     console.log("Delete clicked for post: ", postId);
@@ -48,16 +58,26 @@ export default PostsScreen = () => {
     );
   };
 
+  handlePostClicked = () => {
+    console.log("Post clicked");
+  };
+
   return (
     <Container style={styles.cardsContainer}>
-      <CenterText>Welcome {user.email}!</CenterText>
-      {posts.length == 0 ? (
-        <CenterText>No posts to show</CenterText>
+      {loading ? (
+        <StatusWrapper>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </StatusWrapper>
       ) : (
         <FlatList
           data={posts}
           renderItem={({ item }) => (
-            <NewPostCard item={item} onDelete={handleDeleteClicked} />
+            <NewPostCard
+              item={item}
+              onDelete={handleDeleteClicked}
+              onSaved={handleSavedClicked}
+              onPress={handlePostClicked}
+            />
           )}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}

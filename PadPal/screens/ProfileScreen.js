@@ -14,8 +14,6 @@ import { AuthContext } from "../navigation/AuthProvider";
 import EditProfileScreen from "./EditProfileScreen";
 import { useNavigation } from "@react-navigation/native";
 import NewPostCard from "../components/NewPostCard";
-import { db, storage } from "../firebase";
-import { doc, deleteDoc, getDoc } from "firebase/firestore";
 import { useIsFocused } from "@react-navigation/native";
 import { getUser, getPosts, deletePost } from "../firebase/firebaseMethods";
 
@@ -132,19 +130,7 @@ const ProfileScreen = () => {
               navigation.navigate("UserProfile", { screen: "EditProfile" })
             }
           />
-          <Button
-            title="Logout"
-            buttonStyle={{
-              ...styles.editButton,
-              backgroundColor: theme.colors.primary,
-            }}
-            onPress={() =>
-              Alert.alert("Confirmation", "Are you sure you want to logout?", [
-                { text: "Yes", onPress: () => logout() },
-                { text: "No" },
-              ])
-            }
-          />
+
           <View style={styles.postsContainer}>
             <Text style={styles.postsTitle}>My Posts</Text>
             {posts.map((item) => (

@@ -88,3 +88,7 @@ export const InteractionText = styled.Text`
 export const CenterText = styled.Text`
   font-size: 18px;
 `;
+export const StatusWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+`;

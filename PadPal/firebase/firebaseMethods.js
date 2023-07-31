@@ -9,6 +9,10 @@ import {
   orderBy,
   where,
   Timestamp,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  increment,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -24,7 +28,7 @@ export const getUser = async (userId) => {
     const docRef = doc(db, "users", userId);
     const userEntry = await getDoc(docRef);
     if (userEntry.exists()) {
-      console.log("Document data:", userEntry.data());
+      // console.log("Document data:", userEntry.data());
       return userEntry.data();
     } else {
       console.log("No such document!");
@@ -32,6 +36,27 @@ export const getUser = async (userId) => {
     }
   } catch (error) {
     console.log("Error fetching user:", error);
+    return null;
+  }
+};
+
+// Returns a post object from Firestore
+export const getPost = async (postId) => {
+  try {
+    const postRef = doc(db, "posts", postId);
+    const postSnapshot = await getDoc(postRef);
+    if (postSnapshot.exists()) {
+      console.log("Post data:", postSnapshot.data());
+      return {
+        id: postSnapshot.id,
+        ...postSnapshot.data(),
+      };
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.log("Error fetching post:", error);
     return null;
   }
 };
@@ -55,7 +80,7 @@ export const getPosts = (callback, userId) => {
       const postsList = [];
 
       querySnapshot.forEach((doc) => {
-        const { userId, post, postImg, postTime, saves } = doc.data();
+        const { userId, post, postImg, postTime, saves, saved } = doc.data();
         postsList.push({
           id: doc.id,
           userId: userId,
@@ -66,7 +91,7 @@ export const getPosts = (callback, userId) => {
           post: post,
           postImg: postImg,
           saved: false,
-          saves: "0",
+          saves: saves,
         });
       });
       callback(postsList);
@@ -83,6 +108,38 @@ export const getPosts = (callback, userId) => {
 };
 
 export const getSavedPosts = (callback, userId) => {};
+
+export const savePost = async (postId, userId, save) => {
+  const postRef = doc(db, "posts", postId);
+  const userRef = doc(db, "users", userId);
+
+  try {
+    if (save) {
+      // If the user is saving the post
+      await updateDoc(postRef, {
+        saves: increment(1),
+        saved: true,
+      });
+      await updateDoc(userRef, {
+        saves: arrayUnion(postId),
+      });
+      console.log(`Post with ID ${postId} saved.`);
+    }
+    //else {
+    //   // If the user is un-saving the post
+    //   await updateDoc(postRef, {
+    //     saves: increment(-1),
+    //     saved: false,
+    //   });
+    //   await updateDoc(userRef, {
+    //     saves: arrayRemove(postId),
+    //   });
+    //   console.log(`Post with ID ${postId} un-saved.`);
+    // }
+  } catch (error) {
+    console.error(`Error saving or un-saving post with ID ${postId}:`, error);
+  }
+};
 
 //Delete post from firestore
 export const deletePost = async (postId) => {
