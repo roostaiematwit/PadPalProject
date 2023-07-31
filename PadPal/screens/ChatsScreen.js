@@ -37,13 +37,14 @@ const list = [
   {
     name: "Marco",
     avatar_url: "https://example.com/avatar2.jpg",
-    subtitle: "Pedro, stop being such a good programmer!",
+    subtitle:
+      "Pedro, can we discuss your post about the apartment on x street!",
   },
   {
     name: "Nick",
     avatar_url: "https://example.com/avatar1.jpg",
     subtitle:
-      "Marco told me your a bad programmer and that hes gas lighting you",
+      "Hey, are you still looking for a roomate? I'm interested in the apartment on x street!",
   },
 
   // ... add more chats

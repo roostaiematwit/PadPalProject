@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-export const showBorder = 1;
+export const showBorder = 0;
 
 const stylesGlobal = StyleSheet.create({
   innerContainer: {

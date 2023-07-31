@@ -27,7 +27,9 @@ export default function LoginScreen(props) {
   const onSignIn = () => {
     console.log("Sign in clicked");
     if (email === "" || password === "") {
-      Alert.alert("Invalid Entry", "Please fill in all of the login fields.", [{ text: "OK" }])
+      Alert.alert("Invalid Entry", "Please fill in all of the login fields.", [
+        { text: "OK" },
+      ]);
     } else {
       login(email, password);
     }
@@ -39,7 +41,7 @@ export default function LoginScreen(props) {
         <ScrollView>
           <View style={styles.logoContainer}>
             <Image
-              source={require("../assets/PPTemplogo.png")}
+              source={require("../assets/TempLogo3.png")}
               style={styles.logo}
             />
             <Text style={{ ...stylesGlobal.title, bottom: -3 }}>PadPal</Text>
@@ -54,6 +56,7 @@ export default function LoginScreen(props) {
               inputStyle={styles.input}
               onChangeText={setEmail}
               value={email}
+              autoCorrect={false}
             />
             <Input
               placeholder="Password"
@@ -69,7 +72,7 @@ export default function LoginScreen(props) {
               buttonStyle={styles.loginButton}
               onPress={onSignIn}
             />
-            <TouchableOpacity style={styles.forgotButton} onPress={() => { }}>
+            <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
               <Text style={styles.forgotText}>Forgot Password?</Text>
             </TouchableOpacity>
             <View style={styles.signUpView}>
@@ -99,8 +102,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   logo: {
-    height: 150,
-    width: 150,
+    height: 225,
+    width: 225,
     resizeMode: "cover",
     alignSelf: "center",
   },

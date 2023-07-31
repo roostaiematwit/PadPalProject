@@ -1,17 +1,79 @@
-import React, {
-  useContext,
-} from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView, Alert } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Alert,
+} from "react-native";
 import { Avatar, Text, Button, Card } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useTheme } from "react-native-paper";
 import stylesGlobal, { showBorder } from "../styles/styles";
-import PostsList from "../components/PostsList";
 import { AuthContext } from "../navigation/AuthProvider";
+import EditProfileScreen from "./EditProfileScreen";
+import { useNavigation } from "@react-navigation/native";
+import NewPostCard from "../components/NewPostCard";
+import { useIsFocused } from "@react-navigation/native";
+import { getUser, getPosts, deletePost } from "../firebase/firebaseMethods";
 
 const ProfileScreen = () => {
   const theme = useTheme();
   const { user, logout } = useContext(AuthContext);
+
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState({});
+  const [postCount, setPostCount] = useState(0);
+
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
+
+  //refreshes anytime there is an update to posts
+  useEffect(() => {
+    const unsubscribe = getPosts((postsList) => {
+      setPosts(postsList);
+      setPostCount(postsList.length);
+      if (loading) {
+        setLoading(false);
+      }
+    }, user.uid);
+
+    // Clean up the subscription on unmount
+    return () => unsubscribe && unsubscribe();
+  }, []);
+
+  //Refreshses everytime profile screen is focused
+  useEffect(() => {
+    const fetchUser = async () => {
+      const fetchedUser = await getUser(user.uid);
+      setUserInfo(fetchedUser);
+    };
+    fetchUser();
+  }, [isFocused]);
+
+  const handleDeleteClicked = (postId) => {
+    console.log("Delete clicked for post: ", postId);
+    Alert.alert(
+      "Delete Post",
+      "Are you sure you want to delete this post?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Yes",
+          onPress: () => {
+            deletePost(postId);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={stylesGlobal.innerContdainer}>
       <View style={styles.upperProfileSection}>
@@ -24,35 +86,35 @@ const ProfileScreen = () => {
                 // source={{
                 //   uri: "https://example.com/user-profile.jpg",
                 // }}
-                title={"PF"}
-                containerStyle={{ backgroundColor: "gray" }}
+                title={userInfo.name?.substring(0, 1)}
+                containerStyle={{ backgroundColor: "#e62929" }}
               />
               <View style={{ marginLeft: 20 }}>
-                <Text h4>Pedro Ferreira</Text>
-                <Text h6 style={{ color: "grey" }}>
-                  @PadPalAdmin
+                <Text h3>{userInfo.name}</Text>
+                <Text h5 style={{ color: "grey" }}>
+                  @{userInfo.username}
                 </Text>
               </View>
             </View>
           </View>
 
-          <View style={styles.userBioSection}>
+          {/* <View style={styles.userBioSection}>
             <Text style={styles.description}>
               Pedro is a fire developer no cap, he is a beast at coding and a menace to society!
             </Text>
-          </View>
+          </View> */}
 
           <View style={styles.infoBoxWrapper}>
             <View style={styles.infoBox}>
               <Text style={styles.infoBoxTitle}>Posts</Text>
               <Text h4 style={styles.infoBoxValue}>
-                130
+                {postCount}
               </Text>
             </View>
             <View style={styles.infoBox}>
-              <Text style={styles.infoBoxTitle}>Followers</Text>
+              <Text style={styles.infoBoxTitle}>Saved Posts</Text>
               <Text h4 style={styles.infoBoxValue}>
-                534
+                0
               </Text>
             </View>
           </View>
@@ -64,25 +126,24 @@ const ProfileScreen = () => {
               ...styles.editButton,
               backgroundColor: theme.colors.primary,
             }}
+            onPress={() =>
+              navigation.navigate("UserProfile", { screen: "EditProfile" })
+            }
           />
-          <Button 
-            title="Logout"
-            buttonStyle={{
-              ...styles.editButton,
-              backgroundColor: theme.colors.primary,
-            }}
-            onPress={() => 
-              Alert.alert(
-                "Confirmation", "Are you sure you want to logout?",
-                [
-                  { text: "Yes", onPress: () => logout() },
-                  { text: "No" }
-                ]
-              )
-            } 
-          />
+
+          <View style={styles.postsContainer}>
+            <Text style={styles.postsTitle}>My Posts</Text>
+            {posts.map((item) => (
+              <NewPostCard
+                key={item.id}
+                item={item}
+                onDelete={handleDeleteClicked}
+              />
+            ))}
+          </View>
         </ScrollView>
       </View>
+
       <View style={styles.lowerProfileSection}>
         <ScrollView showsVerticalScrollIndicator={false}></ScrollView>
       </View>
@@ -93,8 +154,13 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   upperProfileSection: {
     backgroundColor: "white",
-
+    paddingBottom: 35,
     borderWidth: showBorder,
+  },
+  postsTitle: {
+    padding: 25,
+    fontSize: 28,
+    textAlign: "center",
   },
   lowerProfileSection: {
     marginVertical: 20,
@@ -124,7 +190,7 @@ const styles = StyleSheet.create({
     borderWidth: showBorder,
   },
   infoBox: {
-    width: "50%",
+    width: "48%",
     alignItems: "center",
     justifyContent: "center",
 
@@ -146,6 +212,13 @@ const styles = StyleSheet.create({
   editButton: {
     marginHorizontal: 30,
     marginVertical: 20,
+  },
+  postsContainer: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    borderTopColor: "#dddddd",
+    borderTopWidth: 1,
+    marginBottom: 10,
   },
 });
 
