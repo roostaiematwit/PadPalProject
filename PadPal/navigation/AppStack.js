@@ -7,6 +7,7 @@ import {
   Animated,
   Image,
 } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -16,18 +17,33 @@ import { COLORS } from "../styles/theme";
 import PostsScreen from "../screens/PostsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import ChatsScreen from "../screens/ChatsScreen";
+import SingleChatScreen from "../screens/SingleChatScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import MakePostScreen from "../screens/MakePostScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
+
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const FeedStack = ({ navigation }) => {};
 
-const MessagesStack = ({ navigation }) => {};
+const MessagesStack = ({ navigation }) => (
+  <Stack.Navigator>
+    <Stack.Screen name="Chat" component={ChatsScreen} />
+    <Stack.Screen
+      name="SingleChat"
+      component={SingleChatScreen}
+      options={({route}) => ({
+        title: route.params.userName,
+        headerBackTitleVisible: false,
+      })}
+    />
+  </Stack.Navigator>
+);
 
 const ProfileStack = ({ navigation }) => (
   <Stack.Navigator>
@@ -60,7 +76,7 @@ export const pages = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={{
+      screenOptions={({route}) => ({
         tabBarActiveTintColor: COLORS.primary, // change this color to match your app's theme
         tabBarInactiveTintColor: "gray",
         headerShown: false,
@@ -82,7 +98,8 @@ export const pages = () => {
           ...styles.shadow,
         },
         tabBarShowLabel: false,
-      }}
+        tabBarVisible: getTabBarVisibility(route),
+      })}
     >
       <Tab.Screen
         name="Home"
@@ -106,8 +123,10 @@ export const pages = () => {
       />
       <Tab.Screen
         name="Chats"
-        component={ChatsScreen}
-        options={{
+        component={MessagesStack}
+        options={({route}) => ({
+          //check back in on this, is tabBarVisible a prop that does something in our case?
+          tabBarVisible: getTabBarVisibility(route),
           tabBarIcon: ({ color, size }) => (
             <>
               <View
@@ -122,7 +141,7 @@ export const pages = () => {
               </View>
             </>
           ),
-        }}
+        })}
       />
 
       <Tab.Screen
@@ -199,9 +218,29 @@ export const pages = () => {
   );
 };
 
+  //remove tab bar on singlechat page
+  const getTabBarVisibility = (route) => {
+    const routeName = route.state 
+    ? route.state.routes[route.state.index].name 
+    : '' || 'Home'
+
+    if(routeName == 'SingleChat')
+      return false;
+    return true;
+  }
+
+
 const AppStack = () => {
   const contentOpacity = useRef(new Animated.Value(0)).current;
+  const getTabBarVisibility = (route) => {
+    const routeName = route.state
+      ? route.state.routes[route.state.index].name
+      : ''
 
+    if(routeName == 'SingleChat')
+      return false;
+    return true;
+  }
   //Fade in animation
   useEffect(() => {
     Animated.timing(contentOpacity, {
