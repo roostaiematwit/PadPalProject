@@ -14,48 +14,6 @@ import { db } from "../firebase";
 
 const Stack = createNativeStackNavigator();
 
-const firebaseExperiment = () => {
-  //Experiment firebase
-  const [people, setPeople] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    const usersQuery = collection(db, "users");
-    onSnapshot(usersQuery, (snapshot) => {
-      let usersList = [];
-      snapshot.docs.map((doc) => usersList.push({ ...doc.data(), id: doc.id }));
-      setPeople(usersList);
-      setLoading(false);
-    });
-  }, []);
-
-  const renderItem = ({ item }) => {
-    return (
-      <View>
-        <Text>{item.username}</Text>
-      </View>
-    );
-  };
-
-  return (
-    <View
-      style={{
-        justifyContent: "center",
-        flex: 1,
-        alignItems: "center",
-      }}
-    >
-      <Text> Hello Its me </Text>
-      <FlatList
-        data={people}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
-  );
-};
-
 export default AuthStack = () => {
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
