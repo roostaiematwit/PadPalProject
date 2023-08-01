@@ -22,12 +22,8 @@ import SettingsScreen from "../screens/SettingsScreen";
 import MakePostScreen from "../screens/MakePostScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 
-import { createStackNavigator } from "@react-navigation/stack";
-
-
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
 
 const FeedStack = ({ navigation }) => {};
 
@@ -37,7 +33,7 @@ const MessagesStack = ({ navigation }) => (
     <Stack.Screen
       name="SingleChat"
       component={SingleChatScreen}
-      options={({route}) => ({
+      options={({ route }) => ({
         title: route.params.userName,
         headerBackTitleVisible: false,
       })}
@@ -58,14 +54,14 @@ const ProfileStack = ({ navigation }) => (
       name="EditProfile"
       component={EditProfileScreen}
       options={{
-        headerTitle: 'Edit Profile',
+        headerTitle: "Edit Profile",
         headerBackTitleVisible: false,
-        headerTitleAlign: 'center',
+        headerTitleAlign: "center",
         headerStyle: {
-          backgroundColor: '#fff',
-          shadowColor: '#fff',
+          backgroundColor: "#fff",
+          shadowColor: "#fff",
           elevation: 0,
-        }
+        },
       }}
     />
   </Stack.Navigator>
@@ -76,7 +72,7 @@ export const pages = () => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={({route}) => ({
+      screenOptions={({ route }) => ({
         tabBarActiveTintColor: COLORS.primary, // change this color to match your app's theme
         tabBarInactiveTintColor: "gray",
         headerShown: false,
@@ -124,7 +120,7 @@ export const pages = () => {
       <Tab.Screen
         name="Chats"
         component={MessagesStack}
-        options={({route}) => ({
+        options={({ route }) => ({
           //check back in on this, is tabBarVisible a prop that does something in our case?
           tabBarVisible: getTabBarVisibility(route),
           tabBarIcon: ({ color, size }) => (
@@ -218,29 +214,26 @@ export const pages = () => {
   );
 };
 
-  //remove tab bar on singlechat page
-  const getTabBarVisibility = (route) => {
-    const routeName = route.state 
-    ? route.state.routes[route.state.index].name 
-    : '' || 'Home'
+//remove tab bar on singlechat page
+const getTabBarVisibility = (route) => {
+  const routeName = route.state
+    ? route.state.routes[route.state.index].name
+    : "" || "Home";
 
-    if(routeName == 'SingleChat')
-      return false;
-    return true;
-  }
-
+  if (routeName == "SingleChat") return false;
+  return true;
+};
 
 const AppStack = () => {
   const contentOpacity = useRef(new Animated.Value(0)).current;
   const getTabBarVisibility = (route) => {
     const routeName = route.state
       ? route.state.routes[route.state.index].name
-      : ''
+      : "";
 
-    if(routeName == 'SingleChat')
-      return false;
+    if (routeName == "SingleChat") return false;
     return true;
-  }
+  };
   //Fade in animation
   useEffect(() => {
     Animated.timing(contentOpacity, {
