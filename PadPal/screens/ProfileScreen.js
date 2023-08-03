@@ -15,7 +15,15 @@ import EditProfileScreen from "./EditProfileScreen";
 import { useNavigation } from "@react-navigation/native";
 import NewPostCard from "../components/NewPostCard";
 import { useIsFocused } from "@react-navigation/native";
-import { getUser, getPosts, deletePost } from "../firebase/firebaseMethods";
+import {
+  getUser,
+  getPosts,
+  deletePost,
+  getSavedPosts,
+  savePost,
+  userHasSavedPost,
+  subscribeToSavedPosts,
+} from "../firebase/firebaseMethods";
 
 const ProfileScreen = () => {
   const theme = useTheme();
@@ -25,22 +33,35 @@ const ProfileScreen = () => {
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState({});
   const [postCount, setPostCount] = useState(0);
+  const [savedPostsCount, setSavedPostsCount] = useState(0);
+  const [savedPostsInfo, setSavedPostsInfo] = useState([]);
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   //refreshes anytime there is an update to posts
   useEffect(() => {
-    const unsubscribe = getPosts((postsList) => {
-      setPosts(postsList);
-      setPostCount(postsList.length);
-      if (loading) {
-        setLoading(false);
-      }
-    }, user.uid);
+    const unsubscribe = getPosts(
+      (postsList) => {
+        setPosts(postsList);
+        setPostCount(postsList.length);
+        if (loading) {
+          setLoading(false);
+        }
+      },
+      user.uid,
+      "MYPOSTS"
+    );
+    const unsubscribeFromSavedPosts = subscribeToSavedPosts(
+      user.uid,
+      setSavedPostsInfo
+    );
 
     // Clean up the subscription on unmount
-    return () => unsubscribe && unsubscribe();
+    return () => {
+      unsubscribe && unsubscribe();
+      unsubscribeFromSavedPosts && unsubscribeFromSavedPosts();
+    };
   }, []);
 
   //Refreshses everytime profile screen is focused
@@ -50,6 +71,13 @@ const ProfileScreen = () => {
       setUserInfo(fetchedUser);
     };
     fetchUser();
+
+    const fetchSavedPosts = async () => {
+      const savedPosts = await getSavedPosts(user.uid);
+      setSavedPostsInfo(savedPosts);
+      setSavedPostsCount(savedPosts.length);
+    };
+    fetchSavedPosts();
   }, [isFocused]);
 
   const handleDeleteClicked = (postId) => {
@@ -73,9 +101,36 @@ const ProfileScreen = () => {
       { cancelable: false }
     );
   };
+  const handleSavedClicked = async (postId) => {
+    console.log("Saved clicked for post: ", postId);
+    const isSaved = await userHasSavedPost(user.uid, postId);
+
+    if (isSaved) {
+      savePost(postId, user.uid, false);
+    } else {
+      savePost(postId, user.uid, true);
+    }
+  };
+
+  const handlePostClicked = async (userId) => {
+    console.log("=============== Clicked on : " + userId);
+
+    try {
+      const savedPosts = await getSavedPosts(userId);
+
+      if (savedPosts.length === 0 || savedPosts === null) {
+        Alert.alert("No posts saved", "This user hasn't saved any posts yet.");
+      } else {
+        // Handle the saved posts.
+        savedPosts.forEach((post) => console.log(post.id));
+      }
+    } catch (error) {
+      console.error("Error getting saved posts:", error);
+    }
+  };
 
   return (
-    <View style={stylesGlobal.innerContdainer}>
+    <View style={stylesGlobal.innerContainer}>
       <View style={styles.upperProfileSection}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.userInfoSection}>
@@ -114,7 +169,7 @@ const ProfileScreen = () => {
             <View style={styles.infoBox}>
               <Text style={styles.infoBoxTitle}>Saved Posts</Text>
               <Text h4 style={styles.infoBoxValue}>
-                0
+                {savedPostsCount}
               </Text>
             </View>
           </View>
@@ -138,9 +193,24 @@ const ProfileScreen = () => {
                 key={item.id}
                 item={item}
                 onDelete={handleDeleteClicked}
+                onSaved={handleSavedClicked}
+                onPress={handlePostClicked}
               />
             ))}
           </View>
+
+          {/* <View style={styles.postsContainer}>
+            <Text style={styles.postsTitle}>Saved Posts</Text>
+            {savedPostsInfo.map((item) => (
+              <NewPostCard
+                key={item.id}
+                item={item}
+                onDelete={handleDeleteClicked}
+                onSaved={handleSavedClicked}
+                onPress={handlePostClicked}
+              />
+            ))}
+          </View> */}
         </ScrollView>
       </View>
 

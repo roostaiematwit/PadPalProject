@@ -28,8 +28,9 @@ import { getUser } from "../firebase/firebaseMethods";
 const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
   const { user } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
-  savedIcon = item.saved ? "heart" : "heart-outline";
-  savedIconColor = item.saved ? COLORS.primary : "#333";
+  const [isSaved, setIsSaved] = useState(item.saved);
+  savedIcon = isSaved ? "heart" : "heart-outline";
+  savedIconColor = isSaved ? COLORS.primary : "#333";
 
   if (item.saves == 1) {
     savesText = "1 Save";
@@ -49,9 +50,15 @@ const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
     fetchUserData();
   }, [item]);
 
+  // Function to handle save
+  const handleSave = async (id) => {
+    await onSaved(id);
+    setIsSaved((prev) => !prev); // Toggle 'saved' state
+  };
+
   return (
     <Card>
-      <TouchableOpacity onPress={() => console.log(item)}>
+      <TouchableOpacity onPress={() => onPress(item.userId)}>
         <UserInfo>
           {/* <UserImg source={{ uri: item.userImg }} /> */}
           <ProfilePicture name={userData ? userData.name : ""} size={55} />
@@ -69,9 +76,9 @@ const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
       )}
 
       <InteractionWrapper>
-        <Interaction active={item.saved} onPress={() => onSaved(item.id)}>
+        <Interaction active={isSaved} onPress={() => handleSave(item.id)}>
           <Ionicons name={savedIcon} size={25} color={savedIconColor} />
-          <InteractionText active={item.saved}>{savesText}</InteractionText>
+          <InteractionText active={isSaved}>{savesText}</InteractionText>
         </Interaction>
         <Interaction>
           <Ionicons name="md-chatbubble-outline" size={25} color="#333" />
