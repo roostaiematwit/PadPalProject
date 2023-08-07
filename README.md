@@ -28,17 +28,17 @@ If any issues arise when trying to install or execute the project, feel free to 
 
 Contributors names and contact info
 
-* Nicholas Kosh 
-* koshn@wit.edu
-* https://www.linkedin.com/in/nick-kosh/
+Nicholas Kosh  <br />
+koshn@wit.edu <br />
+https://www.linkedin.com/in/nick-kosh/
 
-* Pedro Ferreira
-* ferreirap5@wit.edu
-* https://www.linkedin.com/in/pferreira5/
+Pedro Ferreira <br />
+ferreirap5@wit.edu <br />
+https://www.linkedin.com/in/pferreira5/
 
-* Marco Roostaie
-* roostaiem@wit.edu
-* https://www.linkedin.com/in/marco-roostaie/
+Marco Roostaie <br />
+roostaiem@wit.edu <br />
+https://www.linkedin.com/in/marco-roostaie/
 
 ## Version History
 
