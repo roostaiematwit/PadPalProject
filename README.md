@@ -19,8 +19,8 @@ PadPal is a mobile application for iOS devices that provides a hub for students 
 
 ## Help
 
-If any issues arise when trying to install or execute the project, feel free to reach out to our emails
-(ferreirap5@wit.edu , koshn@wit.edu , roostaiem@wit.edu).
+If any issues arise when trying to install or execute the project, feel free to reach out to our emails:
+* (ferreirap5@wit.edu , koshn@wit.edu , roostaiem@wit.edu)
 
 ## Authors
 
