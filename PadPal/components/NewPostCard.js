@@ -6,7 +6,6 @@ import { useContext } from "react";
 import {
   Card,
   UserInfo,
-  UserImg,
   UserName,
   UserInfoText,
   PostTime,
@@ -18,18 +17,24 @@ import {
   Divider,
 } from "../styles/FeedStyles";
 import { AuthContext } from "../navigation/AuthProvider";
-import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
 import moment from "moment/moment";
 import ProfilePicture from "./ProfilePicture";
 import { Platform } from "react-native";
 import { getUser } from "../firebase/firebaseMethods";
 
-const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
+const NewPostCard = ({
+  item,
+  onDelete,
+  onSaved,
+  onPress,
+  showSave = true,
+  showContact = true,
+}) => {
   const { user } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
-  savedIcon = item.saved ? "heart" : "heart-outline";
-  savedIconColor = item.saved ? COLORS.primary : "#333";
+  const [isSaved, setIsSaved] = useState(item.saved);
+  savedIcon = isSaved ? "heart" : "heart-outline";
+  savedIconColor = isSaved ? COLORS.primary : "#333";
 
   if (item.saves == 1) {
     savesText = "1 Save";
@@ -49,11 +54,16 @@ const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
     fetchUserData();
   }, [item]);
 
+  // Function to handle save
+  const handleSave = async (id) => {
+    await onSaved(id);
+    setIsSaved((prev) => !prev); // Toggle 'saved' state
+  };
+
   return (
     <Card>
-      <TouchableOpacity onPress={() => console.log(item)}>
+      <TouchableOpacity onPress={() => onPress(item.userId)}>
         <UserInfo>
-          {/* <UserImg source={{ uri: item.userImg }} /> */}
           <ProfilePicture name={userData ? userData.name : ""} size={55} />
           <UserInfoText>
             <UserName> {userData ? userData.name : "Test"}</UserName>
@@ -69,17 +79,22 @@ const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
       )}
 
       <InteractionWrapper>
-        <Interaction active={item.saved} onPress={() => onSaved(item.id)}>
-          <Ionicons name={savedIcon} size={25} color={savedIconColor} />
-          <InteractionText active={item.saved}>{savesText}</InteractionText>
-        </Interaction>
-        <Interaction>
-          <Ionicons name="md-chatbubble-outline" size={25} color="#333" />
-          <InteractionText>Contact</InteractionText>
-        </Interaction>
-        {/* <Interaction>
-          <Ionicons name="md-share-social-outline" size={25} color="#333" />
-        </Interaction> */}
+        {showSave ? (
+          <Interaction active={isSaved} onPress={() => handleSave(item.id)}>
+            <Ionicons name={savedIcon} size={25} color={savedIconColor} />
+            <InteractionText active={isSaved}>{savesText}</InteractionText>
+          </Interaction>
+        ) : (
+          <>
+            <InteractionText> {savesText}</InteractionText>
+          </>
+        )}
+        {showContact ? (
+          <Interaction>
+            <Ionicons name="md-chatbubble-outline" size={25} color="#333" />
+            <InteractionText>Contact</InteractionText>
+          </Interaction>
+        ) : null}
 
         {user.uid == item.userId ? (
           <Interaction onPress={() => onDelete(item.id)}>
@@ -88,42 +103,6 @@ const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
         ) : null}
       </InteractionWrapper>
     </Card>
-
-    // THIS IS THE REACT NATIVE VERSION OF IT, I WAS WORKING ON FIRST
-    //     <View style={styles.card}>
-    //       <View style={styles.userInfo}>
-    //         <Image source={item.userImg} style={styles.userImg} />
-    //         <View style={styles.userInfoText}>
-    //           <Text style={styles.userName}>{item.userName}</Text>
-    //           <Text style={styles.postTime}>{item.postTime}</Text>
-    //         </View>
-    //       </View>
-    //       <Text style={styles.postText}>{item.post}</Text>
-    //       {item.postImg != "none" ? (
-    //         <Image source={item.postImg} style={styles.postImg} />
-    //       ) : (
-    //         <View style={styles.divider} />
-    //       )}
-
-    //       <View style={styles.interactionWrapper}>
-    //         <TouchableOpacity
-    //           style={item.saved ? styles.activeInteraction : styles.interaction}
-    //         >
-    //           <Ionicons name={savedIcon} size={25} color={savedIconColor} />
-    //           <Text
-    //             style={
-    //               item.saved ? styles.activeInteractionText : styles.interactionText
-    //             }
-    //           >
-    //             {savesText}
-    //           </Text>
-    //         </TouchableOpacity>
-    //         <TouchableOpacity style={styles.interaction}>
-    //           <Ionicons name="md-chatbubble-outline" size={25} color="#333" />
-    //           <Text style={styles.interactionText}>Contact</Text>
-    //         </TouchableOpacity>
-    //       </View>
-    //     </View>
   );
 };
 
