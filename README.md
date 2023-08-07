@@ -24,6 +24,10 @@ If any issues arise when trying to install or execute the project, feel free to 
 * koshn@wit.edu
 * roostaiem@wit.edu
 
+## Project Structure
+
+Within the PadPal folder are the folders that make up each part of the project, most prominently Navigation, Screens, Components and Assets. These allow for modularity in the project structure. The Navigation folder contains the AppStack and other fundamental pillars of the application's backbone. Explore the other folders to find the different UI screens, styles, modular components, visual assets, and more.
+
 ## Authors
 
 Contributors names and contact info
