@@ -6,7 +6,6 @@ import { useContext } from "react";
 import {
   Card,
   UserInfo,
-  UserImg,
   UserName,
   UserInfoText,
   PostTime,
@@ -18,8 +17,6 @@ import {
   Divider,
 } from "../styles/FeedStyles";
 import { AuthContext } from "../navigation/AuthProvider";
-import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
 import moment from "moment/moment";
 import ProfilePicture from "./ProfilePicture";
 import { Platform } from "react-native";
@@ -67,7 +64,6 @@ const NewPostCard = ({
     <Card>
       <TouchableOpacity onPress={() => onPress(item.userId)}>
         <UserInfo>
-          {/* <UserImg source={{ uri: item.userImg }} /> */}
           <ProfilePicture name={userData ? userData.name : ""} size={55} />
           <UserInfoText>
             <UserName> {userData ? userData.name : "Test"}</UserName>
@@ -107,42 +103,6 @@ const NewPostCard = ({
         ) : null}
       </InteractionWrapper>
     </Card>
-
-    // THIS IS THE REACT NATIVE VERSION OF IT, I WAS WORKING ON FIRST
-    //     <View style={styles.card}>
-    //       <View style={styles.userInfo}>
-    //         <Image source={item.userImg} style={styles.userImg} />
-    //         <View style={styles.userInfoText}>
-    //           <Text style={styles.userName}>{item.userName}</Text>
-    //           <Text style={styles.postTime}>{item.postTime}</Text>
-    //         </View>
-    //       </View>
-    //       <Text style={styles.postText}>{item.post}</Text>
-    //       {item.postImg != "none" ? (
-    //         <Image source={item.postImg} style={styles.postImg} />
-    //       ) : (
-    //         <View style={styles.divider} />
-    //       )}
-
-    //       <View style={styles.interactionWrapper}>
-    //         <TouchableOpacity
-    //           style={item.saved ? styles.activeInteraction : styles.interaction}
-    //         >
-    //           <Ionicons name={savedIcon} size={25} color={savedIconColor} />
-    //           <Text
-    //             style={
-    //               item.saved ? styles.activeInteractionText : styles.interactionText
-    //             }
-    //           >
-    //             {savesText}
-    //           </Text>
-    //         </TouchableOpacity>
-    //         <TouchableOpacity style={styles.interaction}>
-    //           <Ionicons name="md-chatbubble-outline" size={25} color="#333" />
-    //           <Text style={styles.interactionText}>Contact</Text>
-    //         </TouchableOpacity>
-    //       </View>
-    //     </View>
   );
 };
 

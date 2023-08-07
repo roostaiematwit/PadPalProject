@@ -12,8 +12,6 @@ import {
   Alert,
 } from "react-native";
 import { Input, Button, Text } from "react-native-elements";
-import { auth } from "../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { COLORS } from "../styles/theme";
 import stylesGlobal from "../styles/styles";
 import { AuthContext } from "../navigation/AuthProvider";
