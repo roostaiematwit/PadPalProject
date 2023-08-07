@@ -5,16 +5,17 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { Avatar, Text, Button, Card } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useTheme } from "react-native-paper";
 import stylesGlobal, { showBorder } from "../styles/styles";
 import { AuthContext } from "../navigation/AuthProvider";
 import EditProfileScreen from "./EditProfileScreen";
 import { useNavigation } from "@react-navigation/native";
 import NewPostCard from "../components/NewPostCard";
 import { useIsFocused } from "@react-navigation/native";
+import { COLORS } from "../styles/theme";
 import {
   getUser,
   getPosts,
@@ -26,7 +27,6 @@ import {
 } from "../firebase/firebaseMethods";
 
 const ProfileScreen = () => {
-  const theme = useTheme();
   const { user, logout } = useContext(AuthContext);
 
   const [posts, setPosts] = useState([]);
@@ -35,6 +35,7 @@ const ProfileScreen = () => {
   const [postCount, setPostCount] = useState(0);
   const [savedPostsCount, setSavedPostsCount] = useState(0);
   const [savedPostsInfo, setSavedPostsInfo] = useState([]);
+  const [selected, setSelected] = useState("myPosts");
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -106,9 +107,9 @@ const ProfileScreen = () => {
     const isSaved = await userHasSavedPost(user.uid, postId);
 
     if (isSaved) {
-      savePost(postId, user.uid, false);
+      return await savePost(postId, user.uid, false);
     } else {
-      savePost(postId, user.uid, true);
+      return await savePost(postId, user.uid, true);
     }
   };
 
@@ -138,9 +139,6 @@ const ProfileScreen = () => {
               <Avatar
                 rounded
                 size={100}
-                // source={{
-                //   uri: "https://example.com/user-profile.jpg",
-                // }}
                 title={userInfo.name?.substring(0, 1)}
                 containerStyle={{ backgroundColor: "#e62929" }}
               />
@@ -152,12 +150,6 @@ const ProfileScreen = () => {
               </View>
             </View>
           </View>
-
-          {/* <View style={styles.userBioSection}>
-            <Text style={styles.description}>
-              Pedro is a fire developer no cap, he is a beast at coding and a menace to society!
-            </Text>
-          </View> */}
 
           <View style={styles.infoBoxWrapper}>
             <View style={styles.infoBox}>
@@ -179,38 +171,79 @@ const ProfileScreen = () => {
             title=" Edit Profile"
             buttonStyle={{
               ...styles.editButton,
-              backgroundColor: theme.colors.primary,
+              backgroundColor: COLORS.primary,
             }}
             onPress={() =>
               navigation.navigate("UserProfile", { screen: "EditProfile" })
             }
           />
-
           <View style={styles.postsContainer}>
-            <Text style={styles.postsTitle}>My Posts</Text>
-            {posts.map((item) => (
-              <NewPostCard
-                key={item.id}
-                item={item}
-                onDelete={handleDeleteClicked}
-                onSaved={handleSavedClicked}
-                onPress={handlePostClicked}
-              />
-            ))}
-          </View>
+            <View style={styles.radioButtonsContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.radioButton,
+                  selected === "myPosts" && styles.radioButtonActive,
+                ]}
+                onPress={() => setSelected("myPosts")}
+              >
+                <Text
+                  style={[
+                    styles.radioButtonText,
+                    selected === "myPosts" && styles.radioButtonTextActive,
+                  ]}
+                >
+                  My Posts
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.radioButton,
+                  selected === "savedPosts" && styles.radioButtonActive,
+                ]}
+                onPress={() => setSelected("savedPosts")}
+              >
+                <Text
+                  style={[
+                    styles.radioButtonText,
+                    selected === "savedPosts" && styles.radioButtonTextActive,
+                  ]}
+                >
+                  Saved Posts
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-          {/* <View style={styles.postsContainer}>
-            <Text style={styles.postsTitle}>Saved Posts</Text>
-            {savedPostsInfo.map((item) => (
-              <NewPostCard
-                key={item.id}
-                item={item}
-                onDelete={handleDeleteClicked}
-                onSaved={handleSavedClicked}
-                onPress={handlePostClicked}
-              />
-            ))}
-          </View> */}
+            {selected === "myPosts" && (
+              <>
+                {posts.map((item) => (
+                  <NewPostCard
+                    key={item.id}
+                    item={item}
+                    onDelete={handleDeleteClicked}
+                    onSaved={handleSavedClicked}
+                    onPress={handlePostClicked}
+                    showSave={false}
+                    showContact={false}
+                  />
+                ))}
+              </>
+            )}
+
+            {selected === "savedPosts" && (
+              <>
+                {savedPostsInfo.map((item) => (
+                  <NewPostCard
+                    key={item.id}
+                    item={item}
+                    onDelete={handleDeleteClicked}
+                    onSaved={handleSavedClicked}
+                    onPress={handlePostClicked}
+                    showSave={false}
+                  />
+                ))}
+              </>
+            )}
+          </View>
         </ScrollView>
       </View>
 
@@ -289,6 +322,31 @@ const styles = StyleSheet.create({
     borderTopColor: "#dddddd",
     borderTopWidth: 1,
     marginBottom: 10,
+  },
+  radioButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 20,
+  },
+  radioButton: {
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    marginHorizontal: 10,
+    width: 150,
+    alignItems: "center",
+  },
+  radioButtonActive: {
+    backgroundColor: COLORS.primary,
+  },
+  radioButtonText: {
+    color: COLORS.primary,
+    fontWeight: "700",
+  },
+  radioButtonTextActive: {
+    color: "#fff",
   },
 });
 

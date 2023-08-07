@@ -136,8 +136,12 @@ export const savePost = async (postId, userId, save) => {
       });
       console.log(`Post with ID ${postId} un-saved by user ${userId}.`);
     }
+    // If execution reached this line, operation was successful
+    return true;
   } catch (error) {
     console.error(`Error saving or un-saving post with ID ${postId}:`, error);
+    // In case of error, return false
+    return false;
   }
 };
 

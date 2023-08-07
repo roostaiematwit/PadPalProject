@@ -25,7 +25,14 @@ import ProfilePicture from "./ProfilePicture";
 import { Platform } from "react-native";
 import { getUser } from "../firebase/firebaseMethods";
 
-const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
+const NewPostCard = ({
+  item,
+  onDelete,
+  onSaved,
+  onPress,
+  showSave = true,
+  showContact = true,
+}) => {
   const { user } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
   const [isSaved, setIsSaved] = useState(item.saved);
@@ -76,17 +83,22 @@ const NewPostCard = ({ item, onDelete, onSaved, onPress }) => {
       )}
 
       <InteractionWrapper>
-        <Interaction active={isSaved} onPress={() => handleSave(item.id)}>
-          <Ionicons name={savedIcon} size={25} color={savedIconColor} />
-          <InteractionText active={isSaved}>{savesText}</InteractionText>
-        </Interaction>
-        <Interaction>
-          <Ionicons name="md-chatbubble-outline" size={25} color="#333" />
-          <InteractionText>Contact</InteractionText>
-        </Interaction>
-        {/* <Interaction>
-          <Ionicons name="md-share-social-outline" size={25} color="#333" />
-        </Interaction> */}
+        {showSave ? (
+          <Interaction active={isSaved} onPress={() => handleSave(item.id)}>
+            <Ionicons name={savedIcon} size={25} color={savedIconColor} />
+            <InteractionText active={isSaved}>{savesText}</InteractionText>
+          </Interaction>
+        ) : (
+          <>
+            <InteractionText> {savesText}</InteractionText>
+          </>
+        )}
+        {showContact ? (
+          <Interaction>
+            <Ionicons name="md-chatbubble-outline" size={25} color="#333" />
+            <InteractionText>Contact</InteractionText>
+          </Interaction>
+        ) : null}
 
         {user.uid == item.userId ? (
           <Interaction onPress={() => onDelete(item.id)}>
