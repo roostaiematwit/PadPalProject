@@ -10,19 +10,20 @@ PadPal is a mobile application for iOS devices that provides a hub for students 
 
 ### Installing, Dependencies, Executing
 
-* Clone the repository into VSCode
-* Download the Expo application on your mobile iOS device
-* Run the 'cd' command into the 'PadPal' folder (cd ./PadPal/)
-* Run 'npm install', then run 'npm install @react-navigation/stack'
-* Run 'npm start'
-* Scan the QR code generated in the console with your mobile device's camera
+- Clone the repository into VSCode
+- Download the Expo application on your mobile iOS device
+- Run the 'cd' command into the 'PadPal' folder (cd ./PadPal/)
+- Run 'npm install', then run 'npm install @react-navigation/stack'
+- Run 'npm start'
+- Scan the QR code generated in the console with your mobile device's camera
 
 ## Help
 
 If any issues arise when trying to install or execute the project, feel free to reach out to our emails:
-* ferreirap5@wit.edu
-* koshn@wit.edu
-* roostaiem@wit.edu
+
+- ferreirap5@wit.edu
+- koshn@wit.edu
+- roostaiem@wit.edu
 
 ## Project Structure
 
@@ -32,7 +33,7 @@ Within the PadPal folder are the folders that make up each part of the project, 
 
 Contributors names and contact info
 
-Nicholas Kosh  <br />
+Nicholas Kosh <br />
 koshn@wit.edu <br />
 https://www.linkedin.com/in/nick-kosh/
 
@@ -46,11 +47,14 @@ https://www.linkedin.com/in/marco-roostaie/
 
 ## Version History
 
-* PadPal 1.0
-    * Initial Release
+- PadPal 1.0
+  - Initial Release
 
 ## Acknowledgments
 
 Inspiration, code snippets, etc.
-* Wentworth Institute of Technology
-* Prof. Salem Othman
+
+- Wentworth Institute of Technology
+- Prof. Salem Othman
+  Help from:
+  https://github.com/itzpradip/react-native-firebase-social-app
