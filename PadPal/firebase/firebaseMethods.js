@@ -13,6 +13,7 @@ import {
   arrayUnion,
   arrayRemove,
   increment,
+  getDocs,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -31,8 +32,7 @@ export const getUser = async (userId) => {
       // console.log("Document data:", userEntry.data());
       return userEntry.data();
     } else {
-      console.log("No such document!");
-      return null;
+      throw new Error(`User document with ID ${userId} does not exist.`);
     }
   } catch (error) {
     console.log("Error fetching user:", error);
@@ -61,10 +61,10 @@ export const getPost = async (postId) => {
   }
 };
 
-export const getPosts = (callback, userId) => {
+export const getPosts = (callback, userId, type) => {
   let q;
 
-  if (userId) {
+  if (type === "MYPOSTS") {
     q = query(
       collection(db, "posts"),
       where("userId", "==", userId),
@@ -76,27 +76,32 @@ export const getPosts = (callback, userId) => {
 
   const unsubscribe = onSnapshot(
     q,
-    (querySnapshot) => {
+    async (querySnapshot) => {
       const postsList = [];
 
-      querySnapshot.forEach((doc) => {
-        const { userId, post, postImg, postTime, saves, saved } = doc.data();
+      // Fetch user data once before iterating over the posts
+      const userData = await getUser(userId);
+      const userSavedPosts = userData && userData.saves ? userData.saves : [];
+
+      querySnapshot.forEach(async (doc) => {
+        const { userId, post, postImg, postTime, saves } = doc.data();
+        const isSaved = userSavedPosts.includes(doc.id);
         postsList.push({
           id: doc.id,
           userId: userId,
-          userName: "Test Name",
+          userName: "Unknown",
           userImg:
             "https://firebasestorage.googleapis.com/v0/b/padpal-ba095.appspot.com/o/images%2F15CD67AB-C41A-41E6-A454-74922A6BE0E7.jpg?alt=media&token=096e0146-7fa2-458b-99c1-d7b3708fe50d",
           postTime: postTime,
           post: post,
           postImg: postImg,
-          saved: false,
+          saved: isSaved,
           saves: saves,
         });
       });
       callback(postsList);
-      const ids = postsList.map((post) => post.id);
-      console.log("Post IDs: ", ids);
+      // const ids = postsList.map((post) => post.id);
+      // console.log("getPost IDs: ", ids);
     },
     (error) => {
       console.error("Error fetching posts: ", error);
@@ -107,8 +112,6 @@ export const getPosts = (callback, userId) => {
   return unsubscribe;
 };
 
-export const getSavedPosts = (callback, userId) => {};
-
 export const savePost = async (postId, userId, save) => {
   const postRef = doc(db, "posts", postId);
   const userRef = doc(db, "users", userId);
@@ -118,26 +121,117 @@ export const savePost = async (postId, userId, save) => {
       // If the user is saving the post
       await updateDoc(postRef, {
         saves: increment(1),
-        saved: true,
       });
       await updateDoc(userRef, {
         saves: arrayUnion(postId),
       });
-      console.log(`Post with ID ${postId} saved.`);
+      console.log(`Post with ID ${postId} saved by user ${userId}.`);
+    } else {
+      // If the user is un-saving the post
+      await updateDoc(postRef, {
+        saves: increment(-1),
+      });
+      await updateDoc(userRef, {
+        saves: arrayRemove(postId),
+      });
+      console.log(`Post with ID ${postId} un-saved by user ${userId}.`);
     }
-    //else {
-    //   // If the user is un-saving the post
-    //   await updateDoc(postRef, {
-    //     saves: increment(-1),
-    //     saved: false,
-    //   });
-    //   await updateDoc(userRef, {
-    //     saves: arrayRemove(postId),
-    //   });
-    //   console.log(`Post with ID ${postId} un-saved.`);
-    // }
+    // If execution reached this line, operation was successful
+    return true;
   } catch (error) {
     console.error(`Error saving or un-saving post with ID ${postId}:`, error);
+    // In case of error, return false
+    return false;
+  }
+};
+
+// Returns true if the user has saved the post, false otherwise
+export const userHasSavedPost = async (userId, postId) => {
+  const userData = await getUser(userId);
+  console.log("User data: ", userData);
+  const userSavedPosts = userData && userData.saves ? userData.saves : [];
+  return userSavedPosts.includes(postId);
+};
+
+export const subscribeToSavedPosts = (userId, handleNewData) => {
+  const userRef = doc(db, "users", userId);
+
+  const unsubscribeFromUser = onSnapshot(userRef, async (userSnap) => {
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      const savedPostIds = userData.saves;
+
+      // If there are no saved posts, return an empty array.
+      if (!savedPostIds || savedPostIds.length === 0) {
+        console.log("User has no saved posts.");
+        handleNewData([]);
+        return;
+      }
+
+      const postsCollectionRef = collection(db, "posts");
+      const postsQuery = query(
+        postsCollectionRef,
+        where("__name__", "in", savedPostIds)
+      );
+
+      const unsubscribeFromPosts = onSnapshot(postsQuery, (postsSnapshot) => {
+        const savedPosts = postsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        console.log("Saved posts retrieved successfully.");
+        handleNewData(savedPosts);
+      });
+
+      // return function to unsubscribe from posts updates when not needed
+      return unsubscribeFromPosts;
+    } else {
+      console.error(`User with ID ${userId} does not exist.`);
+    }
+  });
+
+  // return function to unsubscribe from user updates when not needed
+  return unsubscribeFromUser;
+};
+
+// Returns static list of saved posts
+export const getSavedPosts = async (userId) => {
+  const userRef = doc(db, "users", userId);
+
+  try {
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      const savedPostIds = userData.saves;
+
+      // If there are no saved posts, return an empty array.
+      if (!savedPostIds || savedPostIds.length === 0) {
+        console.log("User has no saved posts.");
+        return [];
+      }
+
+      const postsCollectionRef = collection(db, "posts");
+      const postsQuery = query(
+        postsCollectionRef,
+        where("__name__", "in", savedPostIds)
+      );
+
+      const postsSnapshot = await getDocs(postsQuery);
+      const savedPosts = postsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      console.log("Saved posts retrieved successfully.");
+      return savedPosts;
+    } else {
+      console.error(`User with ID ${userId} does not exist.`);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error retrieving saved posts:", error);
+    return null;
   }
 };
 
@@ -160,7 +254,7 @@ export const addPostToFirestore = async (userId, post, imageUrl) => {
       post: post,
       postImg: imageUrl,
       postTime: Timestamp.fromDate(new Date()),
-      saves: null,
+      saves: 0,
     });
     console.log("Post successfully written!");
     return true;

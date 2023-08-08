@@ -80,17 +80,6 @@ export const pages = () => {
           backgroundColor: "#fff",
           elevation: 0,
 
-          // position: "absolute",
-          // bottom: 25,
-          // left: 20,
-          // right: 20,
-          // elevation: 0,
-          // backgroundColor: "#fff",
-          // borderRadius: 15,
-          // borderColor: "lightgrey",
-          // borderWidth: 0,
-          // height: 90,
-
           ...styles.shadow,
         },
         tabBarShowLabel: false,

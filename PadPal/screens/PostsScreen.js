@@ -9,7 +9,13 @@ import {
 import { Container, CenterText, StatusWrapper } from "../styles/FeedStyles";
 import NewPostCard from "../components/NewPostCard";
 import { AuthContext } from "../navigation/AuthProvider";
-import { getPosts, deletePost, savePost } from "../firebase/firebaseMethods";
+import {
+  getPosts,
+  deletePost,
+  savePost,
+  getSavedPosts,
+  userHasSavedPost,
+} from "../firebase/firebaseMethods";
 import { useIsFocused } from "@react-navigation/native";
 import { COLORS } from "../styles/theme";
 
@@ -25,15 +31,20 @@ export default PostsScreen = () => {
       if (loading) {
         setLoading(false);
       }
-    });
+    }, user.uid);
 
     // Clean up the subscription on unmount
     return () => unsubscribe && unsubscribe();
   }, []);
 
-  const handleSavedClicked = (postId) => {
+  const handleSavedClicked = async (postId) => {
     console.log("Saved clicked for post: ", postId);
-    savePost(postId, user.uid, true);
+    const isSaved = await userHasSavedPost(user.uid, postId);
+    if (isSaved) {
+      savePost(postId, user.uid, false);
+    } else {
+      savePost(postId, user.uid, true);
+    }
   };
 
   const handleDeleteClicked = (postId) => {
@@ -58,8 +69,21 @@ export default PostsScreen = () => {
     );
   };
 
-  handlePostClicked = () => {
-    console.log("Post clicked");
+  const handlePostClicked = async (userId) => {
+    console.log("=============== Clicked on : " + userId);
+
+    try {
+      const savedPosts = await getSavedPosts(userId);
+
+      if (savedPosts.length === 0 || savedPosts === null) {
+        Alert.alert("No posts saved", "This user hasn't saved any posts yet.");
+      } else {
+        // Handle the saved posts.
+        savedPosts.forEach((post) => console.log(post.id));
+      }
+    } catch (error) {
+      console.error("Error getting saved posts:", error);
+    }
   };
 
   return (
